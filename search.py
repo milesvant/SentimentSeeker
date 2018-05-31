@@ -7,7 +7,7 @@ from oauth2client.tools import argparser
 CONFIG_FILE = "config.yaml"
 
 
-def youtube_search(query, max_results=25):
+def youtube_search(query, max_results=20):
     with open(CONFIG_FILE) as y:
         config_data = yaml.safe_load(y)
         youtube = build(config_data['YOUTUBE_API_SERVICE_NAME'],
@@ -18,8 +18,10 @@ def youtube_search(query, max_results=25):
     # query term.
     search_response = youtube.search().list(
         q=query,
+        type="video",
         part="id,snippet",
-        maxResults=max_results
+        maxResults=max_results,
+        videoCaption="closedCaption",
     ).execute()
 
     videos = []

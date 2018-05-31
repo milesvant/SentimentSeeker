@@ -66,7 +66,7 @@ def get_authenticated_service(args):
 
 def process_caption(caption):
     caption = re.sub("(\\n|)(\\n|)[0-9]+\\n(([0-9]|:|,| --> ))+\\n", " ", caption)
-    caption = re.sub("( |)\[Music\]", ".", caption)  # or just space?
+    caption = re.sub("( |)\[([a-z]|[A-Z])+\]", ".", caption)  # or just space?
     caption = re.sub("\n", "", caption)
     return caption
 
