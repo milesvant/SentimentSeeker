@@ -3,7 +3,6 @@ import os
 import re
 import sys
 import yaml
-
 from apiclient.discovery import build_from_document
 from apiclient.errors import HttpError
 from oauth2client.client import flow_from_clientsecrets
@@ -21,8 +20,9 @@ from oauth2client.tools import argparser, run_flow
 # For more information about the client_secrets.json file format, see:
 #   https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 
-CLIENT_SECRETS_FILE = "client_secrets.json"
-CONFIG_FILE = "config.yaml"
+CLIENT_SECRETS_FILE = "%s/yt_config/client_secrets.json" % os.path.abspath(
+    os.path.dirname(__file__))
+CONFIG_FILE = "%s/yt_config/youtube_config.yaml" % os.path.abspath(os.path.dirname(__file__))
 
 # This variable defines a message to display if the CLIENT_SECRETS_FILE is
 # missing.
@@ -51,15 +51,16 @@ def get_authenticated_service(args):
                                        scope=config_data['YOUTUBE_READ_WRITE_SSL_SCOPE'],
                                        message='MISSING_CLIENT_SECRETS_MESSAGE')
 
-    storage = Storage("%s-oauth2.json" % sys.argv[0])
+    storage = Storage("yt_config/%s-oauth2.json" % sys.argv[0])
     credentials = storage.get()
 
     if credentials is None or credentials.invalid:
-        credentials = run_flow(flow, storage, args)
+        flags = argparser.parse_args('--auth_host_name localhost --logging_level INFO'.split())
+        credentials = run_flow(flow, storage, flags)
 
     # Trusted testers can download this discovery document from the developers page
     # and it should be in the same directory with the code.
-    with open("youtube-v3-api-captions.json", "r") as f:
+    with open("yt_config/youtube-v3-api-captions.json", "r") as f:
         doc = f.read()
         return build_from_document(doc, http=credentials.authorize(httplib2.Http()))
 

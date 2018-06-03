@@ -1,6 +1,9 @@
 __pycache__/
+env/
+logs/
+
 *.pyc
 *-oauth2.json
 client_secrets.json
-config.yaml
-test.py
+*config.yaml
+app.db

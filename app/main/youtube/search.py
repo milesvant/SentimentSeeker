@@ -1,10 +1,10 @@
 import yaml
-
+import os
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from oauth2client.tools import argparser
 
-CONFIG_FILE = "config.yaml"
+CONFIG_FILE = "%s/yt_config/youtube_config.yaml" % os.path.abspath(os.path.dirname(__file__))
 
 
 def youtube_search(query, max_results=20):
@@ -24,11 +24,11 @@ def youtube_search(query, max_results=20):
         videoCaption="closedCaption",
     ).execute()
 
-    videos = []
+    videos = {}
 
     # Add each result to the appropriate list, and then display the lists of
     # matching videos, channels, and playlists.
     for search_result in search_response.get("items", []):
         if search_result["id"]["kind"] == "youtube#video":
-            videos.append("%s" % search_result["id"]["videoId"])
+            videos[search_result["id"]["videoId"]] = search_result["snippet"]["title"]
     return videos
