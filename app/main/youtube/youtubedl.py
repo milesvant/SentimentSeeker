@@ -1,12 +1,8 @@
 import os
 import re
+import youtube_dl
 
-
-def vtt_to_plaintext(caption):
-    caption = re.sub("(\\n|)(\\n|)[0-9]+\\n(([0-9]|:|,| --> ))+\\n", " ", caption)
-    caption = re.sub("( |)\[([a-z]|[A-Z])+\]", "", caption)
-    caption = re.sub("\n", "", caption)
-    return caption
+DOWNLOADS = "%s/downloads" % os.path.abspath(os.path.dirname(__file__))
 
 
 def ttml_to_plaintext(caption):
@@ -18,11 +14,18 @@ def ttml_to_plaintext(caption):
 
 
 def download_sub(videoid):
-    # TODO: time/file-size limit on captions?
-    conf_location = "%s/yt_config/youtube-dl.conf" % os.path.abspath(os.path.dirname(__file__))
-    os.system(
-        "youtube-dl --config-location %s -o %s https://www.youtube.com/watch?v=%s" % (
-            conf_location, videoid, videoid))
-    caption = open("%s.en.ttml" % videoid).read()
-    os.system("rm %s.en.ttml" % videoid)
+    ydl_opts = {
+        'skip_download': True,
+        'subtitleslangs': 'en',
+        'writeautomaticsub': True,
+        'subtitleslangs': ['en'],
+        'subtitlesformat': 'ttml',
+        'outtmpl': '%s/%s' % (DOWNLOADS, videoid),
+        'nocheckcertificate': True,
+        'quiet': True,
+    }
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download(["https://www.youtube.com/watch?v=%s" % videoid])
+    caption = open("%s/%s.en.ttml" % (DOWNLOADS, videoid)).read()
+    os.system("rm -- %s/%s.en.ttml" % (DOWNLOADS, videoid))
     return ttml_to_plaintext(caption)
