@@ -15,14 +15,14 @@
     <div class="row">
       <div class="col-md-6">
         <p style="text-align:center;color:green;"><b>Positive Language</b></p>
-        {% for r in results['pos'] %}
-          {% include '_posresult.html' %}
+        {% for r in pos %}
+          {% include 'youtube/_posresult.html' %}
         {% endfor %}
       </div>
       <div class="col-md-6">
         <p style="text-align:center;color:red;"><b>Negative Language</b></p>
-        {% for r in results['neg'] %}
-          {% include '_negresult.html' %}
+        {% for r in neg %}
+          {% include 'youtube/_negresult.html' %}
         {% endfor %}
       </div>
     </div>

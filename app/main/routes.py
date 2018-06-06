@@ -4,7 +4,7 @@ from datetime import datetime
 from app import db
 from app.main import bp
 from app.main.forms import EditProfileForm, PostForm, YoutubeSearchForm
-from app.main.youtube.sort import sort
+from app.main.youtube.sort_videos import sort_videos
 from app.models import User, Post
 
 
@@ -31,8 +31,8 @@ def results(query):
     if form.validate_on_submit():
         q = form.query.data
         return redirect(url_for('main.results', query=q))
-    names, res = sort(query)
-    return render_template('results.html', results=res, names=names)
+    pos, neg = sort_videos(query)
+    return render_template('youtube/results.html', pos=pos, neg=neg)
 
 
 @bp.route('/user/<username>')

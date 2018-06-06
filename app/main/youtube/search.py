@@ -1,5 +1,6 @@
 import yaml
 import os
+from app.main.youtube.youtube_video import Youtube_Video
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from oauth2client.tools import argparser
@@ -24,11 +25,12 @@ def youtube_search(query, max_results=20):
         videoCaption="closedCaption",
     ).execute()
 
-    videos = {}
+    videos = []
 
     # Add each result to the appropriate list, and then display the lists of
     # matching videos, channels, and playlists.
     for search_result in search_response.get("items", []):
         if search_result["id"]["kind"] == "youtube#video":
-            videos[search_result["id"]["videoId"]] = search_result["snippet"]["title"]
+            yv = Youtube_Video(search_result["id"]["videoId"], search_result["snippet"]["title"])
+            videos.append(yv)
     return videos
