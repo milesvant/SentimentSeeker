@@ -2,6 +2,8 @@ import os
 import re
 import youtube_dl
 from textblob import TextBlob
+from app import db
+from app.models import YoutubeVideoDB
 
 
 class Youtube_Video:
@@ -15,9 +17,9 @@ class Youtube_Video:
             score: This Youtube Video's sentiment score
     """
 
-    def __init__(self, videoid=None, name=None):
+    def __init__(self, videoid=None, title=None):
         self.videoid = videoid
-        self.name = name
+        self.title = title
         self.caption = None
         self.score = 0
 
@@ -60,3 +62,11 @@ class Youtube_Video:
         if self.caption is not None:
             tb = TextBlob(self.caption)
             self.score = (tb.sentiment.polarity * tb.sentiment.subjectivity)
+
+    def add_to_db(self):
+        """Adds this Youtube Video to the app (SQL) database if its videoid and
+            title are valid."""
+        if self.videoid is not None and self.title is not None:
+            vid = YoutubeVideoDB(videoid=self.videoid, title=self.title, score=self.score)
+            db.add(vid)
+            db.commit()
