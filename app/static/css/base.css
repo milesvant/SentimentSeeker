@@ -1,0 +1,26 @@
+.navbar {
+  background: #FF7466;
+}
+
+#site_name {
+  color: white;
+}
+
+.navbar .navbar-nav li a {
+  color: white;
+}
+
+.jumbotron {
+  background: #FF7466;
+	color: white;
+	text-align: center;
+}
+
+.jumbotron p {
+  color: white;
+	font-size: 26px;
+}
+
+body {
+  background: #e8e8e8;
+}

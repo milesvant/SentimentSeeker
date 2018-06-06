@@ -1,17 +1,37 @@
 {% extends "base.html" %}
+{% import "bootstrap_mods/index_wtf.html" as wtf %}
+
 
 {% block app_content %}
-    {% if form %}
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.query.label }}<br>
-            {{ form.query(cols=32, rows=4) }}<br>
-            {% for error in form.query.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
-    {% endif %}
+    <div class="jumbotron">
+      <div class="container">
+        <h1>YouTopics</h1>
+        <p>View Yotuube search results sorted by tone and language used.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <form class="form form-horizontal" method="post" role="form">
+            {{ form.hidden_tag() }}
+            {{ wtf.form_errors(form, hiddens="only") }}
+            {{ wtf.form_field(form.query) }}
+            <input type="submit" style="display:none" id="submit-btn" />
+        </form>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+      // Submit form on 'enter' while preventing it from showing on the form
+      $(document).keypress(
+      function(event){
+       if (event.which == '13') {
+          event.preventDefault()
+          document.getElementById("submit-btn").click();
+      }});
+  </script>
 {% endblock %}
