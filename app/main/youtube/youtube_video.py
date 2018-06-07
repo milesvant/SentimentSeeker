@@ -17,11 +17,11 @@ class Youtube_Video:
             score: This Youtube Video's sentiment score
     """
 
-    def __init__(self, videoid=None, title=None):
+    def __init__(self, videoid=None, title=None, caption=None, score=None):
         self.videoid = videoid
         self.title = title
-        self.caption = None
-        self.score = 0
+        self.caption = caption
+        self.score = score
 
     @staticmethod
     def ttml_to_plaintext(caption):
@@ -67,6 +67,26 @@ class Youtube_Video:
         """Adds this Youtube Video to the app (SQL) database if its videoid and
             title are valid."""
         if self.videoid is not None and self.title is not None:
-            vid = YoutubeVideoDB(videoid=self.videoid, title=self.title, score=self.score)
-            db.add(vid)
-            db.commit()
+            vid = YoutubeVideoDB(videoid=self.videoid, title=self.title,
+                                 caption=self.caption, score=self.score)
+            db.session.add(vid)
+            db.session.commit()
+
+    def find_db_entry(self):
+        """Searches app (SQL) database to see if a matching entry exists.
+
+            Returns:
+                First database entry whose videoid and title match this Youtube_Video.
+        """
+        db_entry = YoutubeVideoDB.query.filter_by(videoid=self.videoid).first()
+        if db_entry is not None and db_entry.title == self.title:
+            return db_entry
+        else:
+            return None
+
+    def from_db_entry(self, db_entry):
+        """Creates a Youtube_Video object representation of a database entry."""
+        self.videoid = db_entry.videoid
+        self.title = db_entry.title
+        self.caption = db_entry.caption
+        self.score = db_entry.score

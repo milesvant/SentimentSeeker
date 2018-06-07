@@ -1,3 +1,5 @@
+from app import db
+from app.models import YoutubeVideoDB
 from app.main.youtube.search import youtube_search
 from app.main.youtube.youtube_video import Youtube_Video
 
@@ -16,8 +18,23 @@ def sort_videos(query, max_results=10):
     """
     videos = youtube_search(query, max_results)
     for vid in videos:
-        vid.download_sub()
-        vid.calculate_sentiment()
+        # Search for matching entry in database
+        db_entry = vid.find_db_entry()
+        needs_update = False
+        if db_entry is not None:
+            vid.from_db_entry(db_entry)
+        if vid.caption is None:
+            vid.download_sub()
+            needs_update = True
+        if vid.score is None:
+            vid.calculate_sentiment()
+            needs_update = True
+        if db_entry is None:
+            vid.add_to_db()
+        elif needs_update:
+            db.session.delete(db_entry)
+            vid.add_to_db()
+            db.session.commit()
     pos_videos = list(filter(lambda x: x.score > 0, videos))
     neg_videos = list(filter(lambda x: x.score <= 0, videos))
     pos_videos.sort(key=lambda x: x.score)

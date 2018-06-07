@@ -1,5 +1,4 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.main.youtube import Youtube_Video
 from flask_login import UserMixin
 from hashlib import md5
 from datetime import datetime
@@ -12,18 +11,11 @@ class YoutubeVideoDB(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     videoid = db.Column(db.String(12), index=True, unique=True)
     title = db.Column(db.String(70), index=True, unique=False)
-    caption = db.Column(db.String(10000), unique=False)
-    score = db.Column(db.Integer, unique=False)
+    caption = db.Column(db.String(10000), unique=False, default=None)
+    score = db.Column(db.Integer, unique=False, default=None)
 
     def __repr__(self):
         return '<Youtube Video id:{} title:{} score:{}>'.format(self.videoid, self.title, self.score)
-
-    def to_Youtube_Video(self):
-        """Creates a Youtube_Video object representation of a database entry."""
-        yt = Youtube_Video(self.videoid, self.title)
-        yt.caption = self.caption
-        yt.score = self.score
-        return yt
 
 
 followers = db.Table('followers',
