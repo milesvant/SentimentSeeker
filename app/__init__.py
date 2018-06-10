@@ -9,6 +9,7 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from config import Config
+from celery import Celery
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -18,6 +19,7 @@ login.login_message = 'Please log in to access this page.'
 mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
+celery = Celery()
 
 
 def create_app(config_class=Config):
@@ -30,6 +32,12 @@ def create_app(config_class=Config):
     mail.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
+
+    app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+    app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)

@@ -1,7 +1,7 @@
-from flask import render_template, flash, redirect, url_for, request, current_app
+from flask import render_template, flash, redirect, url_for, request, current_app, jsonify
 from flask_login import current_user, login_required
 from datetime import datetime
-from app import db
+from app import db, celery
 from app.main import bp
 from app.main.forms import EditProfileForm, PostForm, YoutubeSearchForm
 from app.main.youtube.sort_videos import sort_videos
@@ -32,7 +32,43 @@ def results(query):
         q = form.query.data
         return redirect(url_for('main.results', query=q))
     pos, neg = sort_videos(query)
-    return render_template('youtube/results.html', pos=pos, neg=neg)
+    return render_template('youtube/results.html', pos=pos, neg=neg, query=query)
+
+
+@bp.route('/download/<query>', methods=['POST'])
+def download(query):
+    task = sort_videos.apply_async(args=[query])
+    return jsonify({}), 202, {'Location': url_for('results', query=query)}
+
+
+@bp.route('/download_status/<task_id>')
+def download_status(task_id):
+    task = sort_videos.AsyncResult(taskid)
+    if task.state == 'PENDING':
+        # job did not start yet
+        response = {
+            'state': task.state,
+            'current': 0,
+            'total': 1,
+            'status': 'Pending'
+        }
+    elif task.state != 'FAILURE':
+        response = {
+            'state': task.state,
+            'current': task.info.get('current', 0),
+            'total': task.info.get('total', 1),
+            'status': task.info.get('status', 'Running')
+        }
+        if 'result' in task.info:
+            response['result'] = task.info['result']
+    else:
+        response = {
+            'state': task.state,
+            'current': 1,
+            'total': 1,
+            'status': str(task.info),
+        }
+    return jsonify(response)
 
 
 @bp.route('/user/<username>')
