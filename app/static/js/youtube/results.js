@@ -10,9 +10,10 @@ function start_download() {
     });
 
     // send ajax POST request to start background job
+    let query = window.location.href.split("/results/")[1];
     $.ajax({
         type: 'POST',
-        url: '/download/{{ query }}',
+        url: `/download/${query}`,
         success: function(data, status, request) {
             status_url = request.getResponseHeader('Location');
             update_progress(status_url, nanobar, div[0]);
@@ -25,6 +26,7 @@ function start_download() {
 
 function update_progress(status_url, nanobar, status_div) {
     // send GET request to status URL
+    console.log("started");
     $.getJSON(status_url, function(data) {
         // update UI
         percent = parseInt(data['current'] * 100 / data['total']);
@@ -50,8 +52,8 @@ function update_progress(status_url, nanobar, status_div) {
     });
 }
 
-function add_entry() {
-  
+function add_entry(video_url, video_title, sentiment_score) {
+
 }
 
 // Run start_download upon page loading

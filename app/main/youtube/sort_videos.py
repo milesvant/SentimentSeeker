@@ -1,11 +1,11 @@
-from app import db, celery
+from app import db
 from app.models import YoutubeVideoDB
 from app.main.youtube.search import youtube_search
 from app.main.youtube.youtube_video import Youtube_Video
+from rq import get_current_job
 
 
-@celery.task(bind=True)
-def sort_videos(self, query, max_results=10):
+def sort_videos(query, max_results=10):
     """Returns two sorted lists of videos based on a query.
 
         Args:
@@ -37,11 +37,19 @@ def sort_videos(self, query, max_results=10):
             db.session.delete(db_entry)
             vid.add_to_db()
             db.session.commit()
-        self.update_state(state='PROGRESS',
-                          meta={'current': i, 'total': max_results})
+        _set_progress(i, max_results)
         i += 1
     pos_videos = list(filter(lambda x: x.score > 0, videos))
     neg_videos = list(filter(lambda x: x.score <= 0, videos))
     pos_videos.sort(key=lambda x: x.score)
     neg_videos.sort(key=lambda x: x.score, reverse=True)
     return pos_videos, neg_videos
+
+
+def _set_progress(num, max):
+    job = get_current_job()
+    if job:
+        job.meta['progress'] = num/max
+        job.save_meta()
+        if progress >= 1.0:
+            task.complete = True

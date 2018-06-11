@@ -44,6 +44,7 @@ PyYAML==3.12
 redis==2.10.6
 requests==2.18.4
 requests-oauthlib==0.8.0
+rq==0.11.0
 rsa==3.4.2
 six==1.11.0
 SQLAlchemy==1.2.8

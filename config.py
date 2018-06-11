@@ -1,5 +1,7 @@
 import os
 import yaml
+import redis
+from rq import Connection, Worker
 
 CONFIG_FILE = "flask_config.yaml"
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -17,6 +19,7 @@ class Config(object):
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    REDIS_URL = 'redis://redis:6379/0'
     ADMINS = ['your-email@example.com']
     POSTS_PER_PAGE = 3
     LANGUAGES = ['en', 'es']
