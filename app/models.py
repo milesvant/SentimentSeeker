@@ -20,6 +20,16 @@ class YoutubeVideoDB(db.Model):
         return '<Youtube Video id:{} title:{} score:{}>'.format(self.videoid, self.title, self.score)
 
 
+class Tweet(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    tweeter = db.Column(db.String(12), index=True, unique=False)
+    content = db.Column(db.String(280), unique=False)
+    score = db.Column(db.Integer, unique=False, default=None)
+
+    def __repr__(self):
+        return '<Tweet tweeter:{} content:{} score:{}>'.format(self.tweeter, self.content. self.score)
+
+
 followers = db.Table('followers',
                      db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
                      db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))

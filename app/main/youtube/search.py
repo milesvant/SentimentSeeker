@@ -5,10 +5,10 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from oauth2client.tools import argparser
 
-CONFIG_FILE = "%s/yt_config/youtube_config.yaml" % os.path.abspath(os.path.dirname(__file__))
+CONFIG_FILE = "%s/youtube_config.yaml" % os.path.abspath(os.path.dirname(__file__))
 
 
-def youtube_search(query, max_results=20):
+def youtube_search(query, max_results=10):
     with open(CONFIG_FILE) as y:
         config_data = yaml.safe_load(y)
         youtube = build(config_data['YOUTUBE_API_SERVICE_NAME'],
