@@ -22,7 +22,6 @@ mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
 celery = Celery()
-redis = Redis()
 
 
 def create_app(config_class=Config):

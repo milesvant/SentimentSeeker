@@ -16,30 +16,12 @@
     <div class="row">
       <div class="col-md-6">
         <p id="positive"><b>Positive Language</b></p>
-        {% for r in pos %}
-          {% include 'youtube/_posresult.html' %}
-        {% endfor %}
+        <div id="positives"></div>
       </div>
       <div class="col-md-6">
         <p id="negative"><b>Negative Language</b></p>
-        {% for r in neg %}
-          {% include 'youtube/_negresult.html' %}
-        {% endfor %}
+        <div id="negatives"></div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-3"></div>
-      <div class="col-md-6">
-        <div>Icons made by
-          <a href="https://www.flaticon.com/authors/dave-gandy"
-            title="Dave Gandy">Dave Gandy</a>
-            from <a href="https://www.flaticon.com/"
-                    title="Flaticon">www.flaticon.com</a>
-            are licensed by <a href="http://creativecommons.org/licenses/by/3.0/"
-                                title="Creative Commons BY 3.0" target="_blank">
-            CC 3.0 BY</a></div>
-      </div>
-      <div class="col-md-3"></div>
     </div>
 {% endblock %}
 

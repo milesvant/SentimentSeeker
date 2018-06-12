@@ -26,7 +26,6 @@ function start_download() {
 
 function update_progress(status_url, nanobar, status_div) {
     // send GET request to status URL
-    console.log("started");
     $.getJSON(status_url, function(data) {
         // update UI
         percent = parseInt(data['current'] * 100 / data['total']);
@@ -34,9 +33,9 @@ function update_progress(status_url, nanobar, status_div) {
         $(status_div.childNodes[1]).text(percent + '%');
         $(status_div.childNodes[2]).text(data['status']);
         if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
-            if ('result' in data) {
-                // show result
-                $(status_div.childNodes[3]).text('Result: ' + data['result']);
+            if ('videos' in data) {
+                // if done show videos
+                show_videos(data['videos']);
             }
             else {
                 // something unexpected happened
@@ -52,8 +51,38 @@ function update_progress(status_url, nanobar, status_div) {
     });
 }
 
-function add_entry(video_url, video_title, sentiment_score) {
-
+function show_videos(videos) {
+  $("#progress").hide()
+  for (let i = 0; i < videos.length; i++) {
+    let vid = videos[i]
+    if (vid['score'] <= 0) {
+      console.log("negative");
+      let negative_entry = `<table class="table">
+              <tr>
+                <td width="50px">
+                      <span class="glyphicon glyphicon-thumbs-down"></span>
+                </td>
+                  <td>
+                     <a href="https://www.youtube.com/watch?v=${ vid['videoid'] }">${ vid['title'] }</a>
+                  </td>
+              </tr>
+      </table>`;
+      $('#negatives').append(negative_entry);
+    } else {
+      console.log("positive");
+      let positive_entry = `<table class="table">
+              <tr>
+                <td width="50px">
+                      <span class="glyphicon glyphicon-thumbs-up"></span>
+                </td>
+                  <td>
+                     <a href="https://www.youtube.com/watch?v=${ vid['videoid'] }">${ vid['title'] }</a>
+                  </td>
+              </tr>
+      </table>`;
+      $('#positives').append(positive_entry);
+    }
+  }
 }
 
 // Run start_download upon page loading
