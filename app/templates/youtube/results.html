@@ -5,39 +5,28 @@
   {{ super() }}
   <link rel = "stylesheet"
         type = "text/css"
-        href = "{{ url_for("static", filename="css/results.css") }}" />
+        href = "{{ url_for("static", filename="css/youtube/results.css") }}" />
 {% endblock %}
 
 {% block app_content %}
+    <div id="progress"></div>
     {% if form %}
       {{ wtf.quick_form(form) }}
     {% endif %}
     <div class="row">
       <div class="col-md-6">
-        <p style="text-align:center;color:green;"><b>Positive Language</b></p>
-        {% for r in pos %}
-          {% include 'youtube/_posresult.html' %}
-        {% endfor %}
+        <p id="positive"><b>Positive Language</b></p>
+        <div id="positives"></div>
       </div>
       <div class="col-md-6">
-        <p style="text-align:center;color:red;"><b>Negative Language</b></p>
-        {% for r in neg %}
-          {% include 'youtube/_negresult.html' %}
-        {% endfor %}
+        <p id="negative"><b>Negative Language</b></p>
+        <div id="negatives"></div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-3"></div>
-      <div class="col-md-6">
-        <div>Icons made by
-          <a href="https://www.flaticon.com/authors/dave-gandy"
-            title="Dave Gandy">Dave Gandy</a>
-            from <a href="https://www.flaticon.com/"
-                    title="Flaticon">www.flaticon.com</a>
-            are licensed by <a href="http://creativecommons.org/licenses/by/3.0/"
-                                title="Creative Commons BY 3.0" target="_blank">
-            CC 3.0 BY</a></div>
-      </div>
-      <div class="col-md-3"></div>
-    </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
+  <script src="{{ url_for("static", filename="js/youtube/results.js") }}"></script>
 {% endblock %}

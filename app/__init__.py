@@ -9,6 +9,9 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from config import Config
+from redis import Redis
+import rq
+from celery import Celery
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -18,6 +21,7 @@ login.login_message = 'Please log in to access this page.'
 mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
+celery = Celery()
 
 
 def create_app(config_class=Config):
@@ -30,6 +34,16 @@ def create_app(config_class=Config):
     mail.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
+    app.redis = Redis.from_url(app.config['REDIS_URL'])
+    app.task_queue = rq.Queue('topic-tasks', connection=app.redis)
+
+    app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+    app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'],
+                    backend=app.config['CELERY_RESULT_BACKEND'])
+    celery.conf.update(app.config)
+    celery.config_from_object('celeryconfig')
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)

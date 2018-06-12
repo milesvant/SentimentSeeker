@@ -4,6 +4,7 @@ import youtube_dl
 from textblob import TextBlob
 from app import db
 from app.models import YoutubeVideoDB
+from flask import current_app
 
 
 class Youtube_Video:
@@ -90,3 +91,10 @@ class Youtube_Video:
         self.title = db_entry.title
         self.caption = db_entry.caption
         self.score = db_entry.score
+
+    def serialize(self):
+        return {
+            'videoid': self.videoid,
+            'title': self.title,
+            'score': self.score,
+        }

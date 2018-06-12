@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request, current_app
+from flask import render_template, flash, redirect, url_for, request, current_app, jsonify
 from flask_login import current_user, login_required
 from datetime import datetime
 from app import db
@@ -6,6 +6,8 @@ from app.main import bp
 from app.main.forms import EditProfileForm, PostForm, YoutubeSearchForm
 from app.main.youtube.sort_videos import sort_videos
 from app.models import User, Post
+import redis
+from rq import Queue, Connection, get_current_job
 
 
 @bp.before_request
@@ -31,8 +33,38 @@ def results(query):
     if form.validate_on_submit():
         q = form.query.data
         return redirect(url_for('main.results', query=q))
-    pos, neg = sort_videos(query)
-    return render_template('youtube/results.html', pos=pos, neg=neg)
+    # pos, neg = sort_videos(query)
+    return render_template('youtube/results.html', query=query)
+
+
+@bp.route('/download/<query>', methods=['POST'])
+def download(query):
+    task = current_app.task_queue.enqueue(sort_videos, args=[query])
+    task.meta['progress'] = 0
+    return jsonify({}), 202, {'Location': url_for('main.download_status', task_id=task.get_id())}
+
+
+@bp.route('/download_status/<task_id>')
+def download_status(task_id):
+    task = current_app.task_queue.fetch_job(task_id)
+    if task is None:
+        response = {'status': 'unknown'}
+    else:
+        progress = 0
+        state = 'PROGRESS'
+        if 'progress' in task.meta.keys():
+            progress = task.meta['progress']
+            if progress == 1.0:
+                state = 'DONE'
+        response = {
+            'state': state,
+            'current': progress * 10,
+            'total': 10,
+            'status': 'running',
+        }
+        if state == 'DONE':
+            response['videos'] = task.meta['videos']
+    return jsonify(response)
 
 
 @bp.route('/user/<username>')
