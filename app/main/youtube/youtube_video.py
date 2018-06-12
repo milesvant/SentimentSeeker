@@ -43,12 +43,15 @@ class Youtube_Video:
         """Downloads a caption track for this Youtube video."""
         DOWNLOADS = "%s/downloads" % os.path.abspath(os.path.dirname(__file__))
         ydl_opts = {
-            'skip_download': True,  # only download captions, not video
+            # only download captions, not video
+            'skip_download': True,
             'subtitleslangs': 'en',
-            'writeautomaticsub': True,  # use auto captions only
+            # use auto captions only
+            'writeautomaticsub': True,
             'subtitleslangs': ['en'],
             'subtitlesformat': 'ttml',
-            'outtmpl': '%s/%s' % (DOWNLOADS, self.videoid),  # format: videoid.en.ttml
+            # format: videoid.en.ttml
+            'outtmpl': '%s/%s' % (DOWNLOADS, self.videoid),
             'nocheckcertificate': True,
             'quiet': True,
         }
@@ -77,7 +80,8 @@ class Youtube_Video:
         """Searches app (SQL) database to see if a matching entry exists.
 
             Returns:
-                First database entry whose videoid and title match this Youtube_Video.
+                First database entry whose videoid and title match this
+                    Youtube_Video.
         """
         db_entry = YoutubeVideoDB.query.filter_by(videoid=self.videoid).first()
         if db_entry is not None and db_entry.title == self.title:
@@ -86,13 +90,16 @@ class Youtube_Video:
             return None
 
     def from_db_entry(self, db_entry):
-        """Creates a Youtube_Video object representation of a database entry."""
+        """Creates a Youtube_Video object representation of a database
+            entry."""
         self.videoid = db_entry.videoid
         self.title = db_entry.title
         self.caption = db_entry.caption
         self.score = db_entry.score
 
     def serialize(self):
+        """Returns a serialized version of the information needed to
+            progressively load video results onto the results page."""
         return {
             'videoid': self.videoid,
             'title': self.title,

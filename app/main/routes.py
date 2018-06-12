@@ -1,4 +1,5 @@
-from flask import render_template, flash, redirect, url_for, request, current_app, jsonify
+from flask import render_template, flash, redirect, url_for, request
+from flask import current_app, jsonify
 from flask_login import current_user, login_required
 from datetime import datetime
 from app import db
@@ -41,7 +42,9 @@ def results(query):
 def download(query):
     task = current_app.task_queue.enqueue(sort_videos, args=[query])
     task.meta['progress'] = 0
-    return jsonify({}), 202, {'Location': url_for('main.download_status', task_id=task.get_id())}
+    return jsonify({}), 202, {'Location':
+                              url_for('main.download_status',
+                                      task_id=task.get_id())}
 
 
 @bp.route('/download_status/<task_id>')
