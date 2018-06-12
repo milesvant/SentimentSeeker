@@ -1,3 +1,6 @@
+// Run start_download upon page loading
+$(document).ready(start_download());
+
 function start_download() {
     // add task status elements
     div = $('<div class="progress"><div></div><div>0%</div><div>...</div><div>&nbsp;</div></div><hr>');
@@ -34,6 +37,8 @@ function update_progress(status_url, nanobar, status_div) {
         $(status_div.childNodes[2]).text(data['status']);
         if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
             if ('videos' in data) {
+                // hide progress bar
+                $("#progress").hide()
                 // if done show videos
                 show_videos(data['videos']);
             }
@@ -43,49 +48,48 @@ function update_progress(status_url, nanobar, status_div) {
             }
         }
         else {
-            // rerun in 2 seconds
-            setTimeout(function() {
+          if ('videos' in data) {
+              show_videos(data['videos']);
+          }
+          // rerun in 2 seconds
+          setTimeout(function() {
                 update_progress(status_url, nanobar, status_div);
-            }, 2000);
+          }, 2000);
         }
     });
 }
 
 function show_videos(videos) {
-  // hide progress bar
-  $("#progress").hide()
   // add each video to its respective area of the page
   for (let i = 0; i < videos.length; i++) {
-    let vid = videos[i]
-    if (vid['score'] <= 0) {
-      console.log("negative");
-      let negative_entry = `<table class="table">
-              <tr>
-                <td width="50px">
-                      <span class="glyphicon glyphicon-thumbs-down"></span>
-                </td>
-                  <td>
-                     <a href="https://www.youtube.com/watch?v=${ vid['videoid'] }">${ vid['title'] }</a>
-                  </td>
-              </tr>
-      </table>`;
-      $('#negatives').append(negative_entry);
-    } else {
-      console.log("positive");
-      let positive_entry = `<table class="table">
-              <tr>
-                <td width="50px">
-                      <span class="glyphicon glyphicon-thumbs-up"></span>
-                </td>
-                  <td>
-                     <a href="https://www.youtube.com/watch?v=${ vid['videoid'] }">${ vid['title'] }</a>
-                  </td>
-              </tr>
-      </table>`;
-      $('#positives').append(positive_entry);
-    }
+    display_video(videos[i]);
   }
 }
 
-// Run start_download upon page loading
-$(document).ready(start_download());
+function display_video(video) {
+  if (video['score'] <= 0) {
+    let negative_entry = `<table class="table">
+            <tr>
+              <td width="50px">
+                    <span class="glyphicon glyphicon-thumbs-down"></span>
+              </td>
+                <td>
+                   <a href="https://www.youtube.com/watch?v=${ video['videoid'] }">${ video['title'] }</a>
+                </td>
+            </tr>
+    </table>`;
+    $('#negatives').append(negative_entry);
+  } else {
+    let positive_entry = `<table class="table">
+            <tr>
+              <td width="50px">
+                    <span class="glyphicon glyphicon-thumbs-up"></span>
+              </td>
+                <td>
+                   <a href="https://www.youtube.com/watch?v=${ video['videoid'] }">${ video['title'] }</a>
+                </td>
+            </tr>
+    </table>`;
+    $('#positives').append(positive_entry);
+  }
+}

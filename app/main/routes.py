@@ -62,8 +62,18 @@ def download_status(task_id):
             'total': 10,
             'status': 'running',
         }
-        if state == 'DONE':
-            response['videos'] = task.meta['videos']
+        if 'videos' in task.meta.keys():
+            # adds videos that haven't been displayed yet to video_list
+            video_list = []
+            for video in task.meta['videos']:
+                if 'already_displayed' in task.meta.keys():
+                    if video not in task.meta['already_displayed']:
+                        video_list.append(video)
+                        task.meta['already_displayed'].append(video)
+                else:
+                    video_list.append(video)
+                    task.meta['already_displayed'] = [video]
+            response['videos'] = video_list
     return jsonify(response)
 
 
