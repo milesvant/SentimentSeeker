@@ -45,11 +45,6 @@ def sort_videos(query, max_results=10):
         _set_progress(i, max_results)
         _add_video(vid)
         i += 1
-    pos_videos = list(filter(lambda x: x.score > 0, videos))
-    neg_videos = list(filter(lambda x: x.score <= 0, videos))
-    pos_videos.sort(key=lambda x: x.score)
-    neg_videos.sort(key=lambda x: x.score, reverse=True)
-    return pos_videos, neg_videos
 
 
 def _set_progress(num, max):

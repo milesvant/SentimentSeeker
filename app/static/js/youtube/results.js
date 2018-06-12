@@ -52,7 +52,9 @@ function update_progress(status_url, nanobar, status_div) {
 }
 
 function show_videos(videos) {
+  // hide progress bar
   $("#progress").hide()
+  // add each video to its respective area of the page
   for (let i = 0; i < videos.length; i++) {
     let vid = videos[i]
     if (vid['score'] <= 0) {
