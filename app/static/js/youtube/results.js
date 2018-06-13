@@ -13,7 +13,7 @@ function start_download() {
     });
 
     // send ajax POST request to start background job
-    let query = window.location.href.split("/results/")[1];
+    var query = window.location.href.split("/results/")[1];
     $.ajax({
         type: 'POST',
         url: `/download/${query}`,
@@ -35,14 +35,20 @@ function update_progress(status_url, nanobar, status_div) {
         nanobar.go(percent);
         $(status_div.childNodes[1]).text(percent + '%');
         $(status_div.childNodes[2]).text(data['status']);
-        if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+        console.log(data);
+        if (data['state'] == 'FAILED' || data['state'] == 'DONE') {
             if ('videos' in data) {
                 // hide progress bar
                 $("#progress").hide()
                 // if done show videos
                 show_videos(data['videos']);
             }
-            else {
+            else if (data['state'] == 'FAILED') {
+                // upon failure hide the progress bar and display a failure
+                // message overlay
+                $("#progress").hide();
+                display_failure_overlay();
+            } else {
                 // something unexpected happened
                 $(status_div.childNodes[3]).text('Result: ' + data['state']);
             }
@@ -68,7 +74,7 @@ function show_videos(videos) {
 
 function display_video(video) {
   if (video['score'] <= 0) {
-    let negative_entry = `<table class="table">
+    var negative_entry = `<table class="table">
             <tr>
               <td width="50px">
                     <span class="glyphicon glyphicon-thumbs-down"></span>
@@ -80,7 +86,7 @@ function display_video(video) {
     </table>`;
     $('#negatives').append(negative_entry);
   } else {
-    let positive_entry = `<table class="table">
+    var positive_entry = `<table class="table">
             <tr>
               <td width="50px">
                     <span class="glyphicon glyphicon-thumbs-up"></span>
@@ -92,4 +98,15 @@ function display_video(video) {
     </table>`;
     $('#positives').append(positive_entry);
   }
+}
+
+
+function display_failure_overlay() {
+  var query = window.location.href.split("/results/")[1];
+  var overlay_message = `<p>There was an unexpected internal error.</p><br>
+                         <a href="/results/${ query }" style="color:#FF7466;">Try Again</a>
+                         <br><a href="/" style="color:#FF7466;">Home</a>`;
+  $('#overlay-text').append(overlay_message);
+  $('#overlay').css('visibility', 'visible');
+  $('#overlay-text').css('visibility', 'visible');
 }

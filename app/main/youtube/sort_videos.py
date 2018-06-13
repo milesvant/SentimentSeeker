@@ -7,7 +7,7 @@ from rq import get_current_job
 from topic import create_app
 
 
-def sort_videos(query, max_results=10):
+def sort_videos(query):
     """Takes a query and searches YouTube's API for a list of videos matching
         that query, then downloads their captions and calculates their
         sentiment scores. Run asynchronously through Redis Queue.
@@ -19,7 +19,8 @@ def sort_videos(query, max_results=10):
     """
     # give the Redis Queue job a valid Flask application context.
     create_app().app_context().push()
-    videos = youtube_search(query, max_results)
+    videos = youtube_search(query, 10)
+    max_results = len(videos)
     i = 1
     for vid in videos:
         # Search for matching entry in database
@@ -30,13 +31,18 @@ def sort_videos(query, max_results=10):
             vid.from_db_entry(db_entry)
         if vid.caption is None:
             # download caption if neccesary
-            vid.download_sub()
+            try:
+                vid.download_sub()
+            except FileNotFoundError:
+                i += 1
+                continue
             needs_update = True
         if vid.score is None:
             # calculate sentiment score if neccesary
             vid.calculate_sentiment()
             needs_update = True
-        # add to database or replace existing entry if changes have been made
+        # add to database or replace existing entry if changes have
+        # been made
         if db_entry is None:
             vid.add_to_db()
         elif needs_update:
@@ -44,9 +50,9 @@ def sort_videos(query, max_results=10):
             vid.add_to_db()
             db.session.commit()
         # set meta attributes for the corresponding Redis Queue task
-        _set_progress(i, max_results)
         _add_video(vid)
         i += 1
+        _set_progress(i, max_results)
 
 
 def _set_progress(num, max):
@@ -57,12 +63,11 @@ def _set_progress(num, max):
             max: the number of total videos.
     """
     job = get_current_job()
-    if job:
-        progress = num/max
-        job.meta['progress'] = progress
-        job.save_meta()
-        if num == max:
-            job.complete = True
+    progress = num/max
+    job.meta['progress'] = progress
+    if num == max:
+        _report_done()
+    job.save_meta()
 
 
 def _add_video(video):
@@ -73,9 +78,17 @@ def _add_video(video):
             been finished processing.
     """
     job = get_current_job()
-    if job:
-        if 'videos' in job.meta.keys():
-            job.meta['videos'].append(video)
-        else:
-            job.meta['videos'] = [video]
-        job.save_meta()
+    if 'videos' in job.meta.keys():
+        job.meta['videos'].append(video)
+    else:
+        job.meta['videos'] = [video]
+    job.save_meta()
+
+
+def _report_done():
+    """
+    """
+    job = get_current_job()
+    job.meta['complete'] = True
+    job.complete = True
+    job.save_meta()

@@ -8,7 +8,7 @@ from app.main.forms import EditProfileForm, PostForm, YoutubeSearchForm
 from app.main.youtube.sort_videos import sort_videos
 from app.models import User, Post
 import redis
-from rq import Queue, Connection, get_current_job
+from rq import Queue, Connection, get_current_job, get_failed_queue
 
 
 @bp.before_request
@@ -40,7 +40,7 @@ def results(query):
 
 @bp.route('/download/<query>', methods=['POST'])
 def download(query):
-    task = current_app.task_queue.enqueue(sort_videos, args=[query])
+    task = current_app.task_queue.enqueue(sort_videos, args=[query], result_ttl=500)
     task.meta['progress'] = 0
     return jsonify({}), 202, {'Location':
                               url_for('main.download_status',
@@ -49,32 +49,35 @@ def download(query):
 
 @bp.route('/download_status/<task_id>')
 def download_status(task_id):
+    """
+    """
     task = current_app.task_queue.fetch_job(task_id)
-    if task is None:
-        response = {'status': 'unknown'}
+    response = {}
+    print(task.meta)
+    if task is None or task.is_failed:
+        response = {'state': 'FAILED'}
     else:
         progress = 0
         state = 'PROGRESS'
         if 'progress' in task.meta.keys():
             progress = task.meta['progress']
-            if progress == 1.0:
-                state = 'DONE'
-        response = {
-            'state': state,
-            'current': progress * 10,
-            'total': 10,
-            'status': 'running',
-        }
+            response = {
+                'state': state,
+                'current': progress * 10,
+                'total': 10,
+                'status': 'running',
+            }
         if 'videos' in task.meta.keys():
             # adds videos that haven't been displayed yet to video_list
             video_list = []
             for video in task.meta['videos']:
                 video_list.append(video.serialize())
-                print(task.meta['videos'])
                 task.meta['videos'].remove(video)
                 task.save_meta()
-                print(task.meta['videos'])
             response['videos'] = video_list
+        if 'complete' in task.meta.keys():
+            print("happened")
+            response['state'] = 'DONE'
     return jsonify(response)
 
 
