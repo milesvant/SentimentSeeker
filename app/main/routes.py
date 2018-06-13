@@ -69,13 +69,11 @@ def download_status(task_id):
             # adds videos that haven't been displayed yet to video_list
             video_list = []
             for video in task.meta['videos']:
-                if 'already_displayed' in task.meta.keys():
-                    if video not in task.meta['already_displayed']:
-                        video_list.append(video)
-                        task.meta['already_displayed'].append(video)
-                else:
-                    video_list.append(video)
-                    task.meta['already_displayed'] = [video]
+                video_list.append(video.serialize())
+                print(task.meta['videos'])
+                task.meta['videos'].remove(video)
+                task.save_meta()
+                print(task.meta['videos'])
             response['videos'] = video_list
     return jsonify(response)
 

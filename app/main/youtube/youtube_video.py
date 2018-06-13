@@ -24,6 +24,9 @@ class Youtube_Video:
         self.caption = caption
         self.score = score
 
+    def __cmp__(self, other):
+        return (self.videoid == other.videoid)
+
     @staticmethod
     def ttml_to_plaintext(caption):
         """Converts text from ttml to plaintext.

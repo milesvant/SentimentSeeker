@@ -2,14 +2,13 @@ import yaml
 import os
 from app.main.youtube.youtube_video import Youtube_Video
 from googleapiclient.discovery import build
-from oauth2client.tools import argparser
 
 
 def youtube_search(query, max_results=10):
     CONFIG_FILE = "{}/youtube_config.yaml".format(
         os.path.abspath(os.path.dirname(__file__)))
     with open(CONFIG_FILE) as y:
-        config_data = yaml.safe_load(y)
+        config_data = yaml.load(y)
         youtube = build(config_data['YOUTUBE_API_SERVICE_NAME'],
                         config_data['YOUTUBE_API_VERSION'],
                         developerKey=config_data['DEVELOPER_KEY'])

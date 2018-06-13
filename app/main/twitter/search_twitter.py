@@ -1,16 +1,39 @@
 import twitter
 import yaml
 import os
-
-CONFIG_FILE = "{}/twitter_config.yaml".format(
-    os.path.abspath(os.path.dirname(__file__)))
+from app.main.twitter_module.tweet import Tweet
 
 
-def twitter_search(query, max_results=10):
+def search_twitter(query, max_results=20):
+    """Searches twitter's search API for a query.
+
+        Args:
+            query: a search term (without hashtags for now).
+            max_results: the maximum number of results desired.
+        Returns:
+            A list of Tweet objects which are representations of the results
+            from Twitter's API response.
+    """
     # load config data from twitter_config.yaml
+    CONFIG_FILE = "{}/twitter_config.yaml".format(
+        os.path.abspath(os.path.dirname(__file__)))
     with open(CONFIG_FILE) as y:
-        c = yaml.safe_load(y)
-        twitter_api = twitter.api(consumer_key=c['CONSUMER_KEY'],
-                                  consumer_secret=c['CONSUMER_SECRET'],
-                                  access_token_key=c['ACCESS_TOKEN'],
-                                  access_token_secret=c['ACCESS_TOKEN_SECRET'])
+        config = yaml.load(y)
+        consumer_key = config['CONSUMER_KEY']
+        consumer_secret = config['CONSUMER_SECRET']
+        access_token_key = config['ACCESS_TOKEN']
+        access_token_secret = config['ACCESS_TOKEN_SECRET']
+        twitter_api = twitter.Api(consumer_key,
+                                  consumer_secret,
+                                  access_token_key,
+                                  access_token_secret)
+    # search twitter api for query (sorted by popular)
+    results = twitter_api.GetSearch(
+        raw_query="q={}&lang=en&result_type=popular&count={}".format(
+            query, max_results))
+    # convert the result into a list of Tweet objects
+    tweet_list = []
+    for result in results:
+        result_tweet = Tweet(result['user']['screen_name'],
+                             result['quoted_status']['text'],
+                             result['urls']['expanded_url'])

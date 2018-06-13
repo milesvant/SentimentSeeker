@@ -75,6 +75,7 @@ def _add_video(video):
     job = get_current_job()
     if job:
         if 'videos' in job.meta.keys():
-            job.meta['videos'].append(video.serialize())
+            job.meta['videos'].append(video)
         else:
-            job.meta['videos'] = list(video.serialize())
+            job.meta['videos'] = [video]
+        job.save_meta()
