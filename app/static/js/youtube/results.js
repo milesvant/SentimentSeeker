@@ -1,5 +1,7 @@
 // Run start_download upon page loading
 $(document).ready(start_download());
+// Holds a list of the videoids of the videos which have been displayed already
+var visible_videos = [];
 
 function start_download() {
     // add task status elements
@@ -73,7 +75,13 @@ function show_videos(videos) {
 }
 
 function display_video(video) {
+  // Displays video results in their respective columns after checking if they
+  // have already been displayed
+  if (visible_videos.includes(video['videoid'])) {
+    return;
+  }
   if (video['score'] <= 0) {
+    // negatives
     var negative_entry = `<table class="table">
             <tr>
               <td width="50px">
@@ -85,7 +93,8 @@ function display_video(video) {
             </tr>
     </table>`;
     $('#negatives').append(negative_entry);
-  } else {
+  } else{
+    // positives
     var positive_entry = `<table class="table">
             <tr>
               <td width="50px">
@@ -98,10 +107,12 @@ function display_video(video) {
     </table>`;
     $('#positives').append(positive_entry);
   }
+  visible_videos.push(video['videoid']);
 }
 
 
 function display_failure_overlay() {
+  // Unhide the error message overlay
   var query = window.location.href.split("/results/")[1];
   var overlay_message = `<p>There was an unexpected internal error.</p><br>
                          <a href="/results/${ query }" style="color:#FF7466;">Try Again</a>

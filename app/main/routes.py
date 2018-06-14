@@ -40,7 +40,7 @@ def results(query):
 
 @bp.route('/download/<query>', methods=['POST'])
 def download(query):
-    task = current_app.task_queue.enqueue(sort_videos, args=[query], result_ttl=500)
+    task = current_app.task_queue.enqueue(sort_videos, args=[query])
     task.meta['progress'] = 0
     return jsonify({}), 202, {'Location':
                               url_for('main.download_status',
@@ -53,30 +53,25 @@ def download_status(task_id):
     """
     task = current_app.task_queue.fetch_job(task_id)
     response = {}
-    print(task.meta)
     if task is None or task.is_failed:
         response = {'state': 'FAILED'}
     else:
         progress = 0
         state = 'PROGRESS'
-        if 'progress' in task.meta.keys():
-            progress = task.meta['progress']
+        if 'current' in task.meta.keys():
             response = {
                 'state': state,
-                'current': progress * 10,
-                'total': 10,
+                'current': task.meta['current'],
+                'total': task.meta['total'],
                 'status': 'running',
             }
         if 'videos' in task.meta.keys():
-            # adds videos that haven't been displayed yet to video_list
+            # adds a list of the to-be-displayed videos to the JSON response
             video_list = []
             for video in task.meta['videos']:
                 video_list.append(video.serialize())
-                task.meta['videos'].remove(video)
-                task.save_meta()
             response['videos'] = video_list
         if 'complete' in task.meta.keys():
-            print("happened")
             response['state'] = 'DONE'
     return jsonify(response)
 

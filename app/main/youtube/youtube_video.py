@@ -24,6 +24,10 @@ class Youtube_Video:
         self.caption = caption
         self.score = score
 
+    def __repr__(self):
+        return '<Youtube_Video videoid={} title={} score={}>'.format(
+            self.videoid, self.title, self.score)
+
     def __cmp__(self, other):
         return (self.videoid == other.videoid)
 

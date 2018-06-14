@@ -56,7 +56,8 @@ def sort_videos(query):
 
 
 def _set_progress(num, max):
-    """Updates the 'progress' meta attribute of the current Redis Queue task.
+    """Updates the 'current' and 'total' meta attribute of the current Redis
+        Queue task.
 
         Args:
             num: the number of videos that have been downloaded and scored.
@@ -64,7 +65,8 @@ def _set_progress(num, max):
     """
     job = get_current_job()
     progress = num/max
-    job.meta['progress'] = progress
+    job.meta['current'] = num
+    job.meta['total'] = max
     if num == max:
         _report_done()
     job.save_meta()
