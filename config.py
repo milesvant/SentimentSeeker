@@ -3,11 +3,10 @@ import yaml
 import redis
 from rq import Connection, Worker
 
-CONFIG_FILE = "flask_config.yaml"
-basedir = os.path.abspath(os.path.dirname(__file__))
-
 
 class Config(object):
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    CONFIG_FILE = "%s/flask_config.yaml" % basedir
     with open(CONFIG_FILE) as y:
         config_data = yaml.safe_load(y)
         SECRET_KEY = config_data['SECRET_KEY']

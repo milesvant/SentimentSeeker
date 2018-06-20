@@ -28,9 +28,6 @@ class Youtube_Video:
         return '<Youtube_Video videoid={} title={} score={}>'.format(
             self.videoid, self.title, self.score)
 
-    def __cmp__(self, other):
-        return (self.videoid == other.videoid)
-
     @staticmethod
     def ttml_to_plaintext(caption):
         """Converts text from ttml to plaintext.
@@ -64,9 +61,13 @@ class Youtube_Video:
         }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download(["https://www.youtube.com/watch?v=%s" % self.videoid])
-        caption = open("%s/%s.en.ttml" % (DOWNLOADS, self.videoid)).read()
-        os.system("rm -- %s/%s.en.ttml" % (DOWNLOADS, self.videoid))
-        self.caption = self.ttml_to_plaintext(caption)
+        try:
+            with open("%s/%s.en.ttml" % (DOWNLOADS, self.videoid)) as file:
+                caption = file.read()
+            os.system("rm -- %s/%s.en.ttml" % (DOWNLOADS, self.videoid))
+            self.caption = self.ttml_to_plaintext(caption)
+        except IOError:
+            self.caption = ""
 
     def calculate_sentiment(self):
         """Calculates the sentiment score for this Youtube Video"""

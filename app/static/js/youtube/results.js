@@ -93,7 +93,7 @@ function display_video(video) {
             </tr>
     </table>`;
     $('#negatives').append(negative_entry);
-  } else{
+  } else {
     // positives
     var positive_entry = `<table class="table">
             <tr>
