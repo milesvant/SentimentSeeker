@@ -76,7 +76,7 @@ def _add_video(video):
     """Updates the 'videos' meta attribute of the current Redis Queue task.
 
         Args:
-            video: A serialized depiction of a Youtube_Video object which has
+            video: A Youtube_Video object which has
             been finished processing.
     """
     job = get_current_job()
@@ -88,8 +88,8 @@ def _add_video(video):
 
 
 def _report_done():
-    """
-    """
+    """Updates the meta attributes of the current Redis Queue task to mark that
+       the task has completed."""
     job = get_current_job()
     job.meta['complete'] = True
     job.complete = True

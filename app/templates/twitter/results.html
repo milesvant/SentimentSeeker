@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel = "stylesheet"
+        type = "text/css"
+        href = "{{ url_for("static", filename="css/twitter/results.css") }}" />
+{% endblock %}
+
+{% block app_content %}
+    <div id="progress"></div>
+    {% if form %}
+      {{ wtf.quick_form(form) }}
+    {% endif %}
+    <div class="row">
+      <div class="col-md-6">
+        <span class="glyphicon glyphicon-thumbs-up"></span><p id="positive"><b>Positive Language</b></p>
+        <div id="positives">
+          {% for tweet in positive_tweets %}
+          <table class="table">
+                  <tr>
+                    <td width="50px">
+                    </td>
+                      <td>
+                         <div class="tweet" tweetID="{{ tweet.id }}"></div>
+                      </td>
+                  </tr>
+          </table>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <span class="glyphicon glyphicon-thumbs-down"></span><p id="negative"><b>Negative Language</b></p>
+        <div id="negatives">
+          {% for tweet in negative_tweets %}
+          <table class="table">
+                  <tr>
+                    <td width="50px">
+                    </td>
+                      <td>
+                        <div class="tweet" tweetID="{{ tweet.id }}"></div>
+                      </td>
+                  </tr>
+          </table>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
+  <script sync src="https://platform.twitter.com/widgets.js"></script>
+  <script src="{{ url_for("static", filename="js/twitter/results.js") }}"></script>
+{% endblock %}

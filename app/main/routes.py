@@ -4,8 +4,9 @@ from flask_login import current_user, login_required
 from datetime import datetime
 from app import db
 from app.main import bp
-from app.main.forms import EditProfileForm, PostForm, YoutubeSearchForm
+from app.main.forms import EditProfileForm, PostForm, YoutubeSearchForm, TwitterSearchForm
 from app.main.youtube.sort_videos import sort_videos
+from app.main.twitter.sort_tweets import sort_tweets
 from app.models import User, Post
 import redis
 from rq import Queue, Connection, get_current_job, get_failed_queue
@@ -21,34 +22,37 @@ def before_request():
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 def index():
+    ytform = YoutubeSearchForm()
+    twtform = TwitterSearchForm()
+    if ytform.queryyt.data and ytform.validate_on_submit():
+        q = ytform.queryyt.data
+        return redirect(url_for('main.video_results', query=q))
+    if twtform.querytwt.data and twtform.validate_on_submit():
+        q = twtform.querytwt.data
+        return redirect(url_for('main.twitter_results', query=q))
+    return render_template('index.html', title='Home', ytform=ytform, twtform=twtform)
+
+
+@bp.route('/video_results/<query>', methods=['GET', 'POST'])
+def video_results(query):
     form = YoutubeSearchForm()
     if form.validate_on_submit():
         q = form.query.data
-        return redirect(url_for('main.results', query=q))
-    return render_template('index.html', title='Home', form=form)
-
-
-@bp.route('/results/<query>', methods=['GET', 'POST'])
-def results(query):
-    form = YoutubeSearchForm()
-    if form.validate_on_submit():
-        q = form.query.data
-        return redirect(url_for('main.results', query=q))
-    # pos, neg = sort_videos(query)
+        return redirect(url_for('main.video_results', query=q))
     return render_template('youtube/results.html', query=query)
 
 
-@bp.route('/download/<query>', methods=['POST'])
-def download(query):
+@bp.route('/download_video/<query>', methods=['POST'])
+def download_video(query):
     task = current_app.task_queue.enqueue(sort_videos, args=[query])
     task.meta['progress'] = 0
     return jsonify({}), 202, {'Location':
-                              url_for('main.download_status',
+                              url_for('main.download_video_status',
                                       task_id=task.get_id())}
 
 
-@bp.route('/download_status/<task_id>')
-def download_status(task_id):
+@bp.route('/download_video_status/<task_id>')
+def download_video_status(task_id):
     """
     """
     task = current_app.task_queue.fetch_job(task_id)
@@ -74,6 +78,18 @@ def download_status(task_id):
         if 'complete' in task.meta.keys():
             response['state'] = 'DONE'
     return jsonify(response)
+
+
+@bp.route('/twitter_results/<query>', methods=['GET', 'POST'])
+def twitter_results(query):
+    form = TwitterSearchForm()
+    if form.validate_on_submit():
+        q = form.query.data
+        return redirect(url_for('main.twitter_results', query=q))
+    positive_tweets, negative_tweets = sort_tweets(query)
+    return render_template('twitter/results.html',
+                           positive_tweets=positive_tweets,
+                           negative_tweets=negative_tweets)
 
 
 @bp.route('/user/<username>')

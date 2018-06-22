@@ -1,5 +1,5 @@
 .navbar {
-  background: #FF7466;
+  background: linear-gradient(90deg, #FF7466, #3399ff);
 }
 
 #site_name {
@@ -11,7 +11,17 @@
 }
 
 .jumbotron {
-  background: #FF7466;
+  padding-top: 230px;
+}
+
+#youtube {
+  background: transparent;
+	color: white;
+	text-align: center;
+}
+
+#twitter {
+  background: transparent;
 	color: white;
 	text-align: center;
 }
@@ -22,7 +32,7 @@
 }
 
 body {
-  background: linear-gradient(90deg, #cccccf, #ffcccc);
+  background: linear-gradient(90deg, #FF7466, #3399ff);
 }
 
 #overlay {

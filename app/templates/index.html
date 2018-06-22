@@ -3,23 +3,45 @@
 
 
 {% block app_content %}
-    <div class="jumbotron">
-      <div class="container">
-        <h1>YouTopics</h1>
-        <p>View YouTube search results sorted by tone and language used.</p>
+    <div class="col-md-6">
+      <div class="jumbotron" id="youtube">
+        <div class="container">
+          <h1>YouTopics</h1>
+          <p>View YouTube search results sorted by tone and language used.</p>
+        </div>
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+            <form class="form form-horizontal" method="post" role="form" id="youtube-form">
+                {{ ytform.hidden_tag() }}
+                {{ wtf.form_errors(ytform, hiddens="only") }}
+                {{ wtf.form_field(ytform.queryyt) }}
+                <input type="submit" style="display:none" id="youtube-submit-btn" />
+            </form>
+          </div>
+          <div class="col-md-2"></div>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-2"></div>
-      <div class="col-md-8">
-        <form class="form form-horizontal" method="post" role="form">
-            {{ form.hidden_tag() }}
-            {{ wtf.form_errors(form, hiddens="only") }}
-            {{ wtf.form_field(form.query) }}
-            <input type="submit" style="display:none" id="submit-btn" />
-        </form>
+    <div class="col-md-6">
+      <div class="jumbotron" id="twitter">
+        <div class="container">
+          <h1>Twopics</h1>
+          <p>View Twitter search results sorted by tone and language used.</p>
+        </div>
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+            <form class="form form-horizontal" method="post" role="form" id="twitter-form">
+                {{ twtform.hidden_tag() }}
+                {{ wtf.form_errors(twtform, hiddens="only") }}
+                {{ wtf.form_field(twtform.querytwt) }}
+                <input type="submit" style="display:none" id="twitter-submit-btn" />
+            </form>
+          </div>
+          <div class="col-md-2"></div>
+        </div>
       </div>
-      <div class="col-md-2"></div>
     </div>
 {% endblock %}
 

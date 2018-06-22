@@ -119,7 +119,7 @@ the necessary fix for required=False attributes, but will also not set the requi
         {% if field.type == 'FileField' %}
           {{field(**kwargs)|safe}}
         {% else %}
-          {{field(class="form-control", placeholder="Search YouTube",
+          {{field(class="form-control", placeholder="Search",
                   style="text-align:center;font-size:40px;height:80px;
                   margin-top:130px;",
                   id="search-box", **kwargs)|safe}}

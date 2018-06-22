@@ -1,7 +1,7 @@
 import twitter
 import yaml
 import os
-from app.main.twitter_module.tweet import Tweet
+from app.main.twitter.tweet import Tweet
 
 
 def search_twitter(query, max_results=20):
@@ -34,6 +34,8 @@ def search_twitter(query, max_results=20):
     # convert the result into a list of Tweet objects
     tweet_list = []
     for result in results:
-        result_tweet = Tweet(result['user']['screen_name'],
-                             result['quoted_status']['text'],
-                             result['urls']['expanded_url'])
+        result_tweet = Tweet(name=result.user.name,
+                             text=result.text,
+                             id=result.id,)
+        tweet_list.append(result_tweet)
+    return tweet_list

@@ -28,5 +28,10 @@ class PostForm(FlaskForm):
 
 
 class YoutubeSearchForm(FlaskForm):
-    query = TextAreaField('Search Youtube', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    queryyt = TextAreaField('Search Youtube')
+    submityt = SubmitField('Submit')
+
+
+class TwitterSearchForm(FlaskForm):
+    querytwt = TextAreaField('Search Twitter')
+    submittwt = SubmitField('Submit')

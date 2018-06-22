@@ -21,10 +21,11 @@ class YoutubeVideoDB(db.Model):
             self.videoid, self.title, self.score)
 
 
-class Tweet(db.Model):
+class TweetDB(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    tweeter = db.Column(db.String(12), index=True, unique=False)
-    content = db.Column(db.String(280), unique=False)
+    twitter_id = db.Column(db.Integer)
+    name = db.Column(db.String(12), index=True, unique=False)
+    text = db.Column(db.String(280), unique=False)
     score = db.Column(db.Integer, unique=False, default=None)
 
     def __repr__(self):

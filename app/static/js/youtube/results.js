@@ -15,10 +15,10 @@ function start_download() {
     });
 
     // send ajax POST request to start background job
-    var query = window.location.href.split("/results/")[1];
+    var query = window.location.href.split("/video_results/")[1];
     $.ajax({
         type: 'POST',
-        url: `/download/${query}`,
+        url: `/download_video/${query}`,
         success: function(data, status, request) {
             status_url = request.getResponseHeader('Location');
             update_progress(status_url, nanobar, div[0]);
@@ -33,7 +33,8 @@ function update_progress(status_url, nanobar, status_div) {
     // send GET request to status URL
     $.getJSON(status_url, function(data) {
         // update UI
-        percent = parseInt(data['current'] * 100 / data['total']);
+        percent = data['total'] == 0 || data['total'] == undefined ? 0 : parseInt(data['current'] * 100 / data['total']);
+        console.log(data['total']);
         nanobar.go(percent);
         $(status_div.childNodes[1]).text(percent + '%');
         $(status_div.childNodes[2]).text(data['status']);
@@ -115,7 +116,7 @@ function display_failure_overlay() {
   // Unhide the error message overlay
   var query = window.location.href.split("/results/")[1];
   var overlay_message = `<p>There was an unexpected internal error.</p><br>
-                         <a href="/results/${ query }" style="color:#FF7466;">Try Again</a>
+                         <a href="/video_results/${ query }" style="color:#FF7466;">Try Again</a>
                          <br><a href="/" style="color:#FF7466;">Home</a>`;
   $('#overlay-text').append(overlay_message);
   $('#overlay').css('visibility', 'visible');
