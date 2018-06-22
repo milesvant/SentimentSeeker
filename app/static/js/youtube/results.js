@@ -85,11 +85,10 @@ function display_video(video) {
     // negatives
     var negative_entry = `<table class="table">
             <tr>
-              <td width="50px">
-                    <span class="glyphicon glyphicon-thumbs-down"></span>
-              </td>
                 <td>
-                   <a href="https://www.youtube.com/watch?v=${ video['videoid'] }">${ video['title'] }</a>
+                <iframe width="650" height="400"
+                  src="https://www.youtube.com/embed/${ video['videoid'] }">
+                </iframe>
                 </td>
             </tr>
     </table>`;
@@ -98,11 +97,10 @@ function display_video(video) {
     // positives
     var positive_entry = `<table class="table">
             <tr>
-              <td width="50px">
-                    <span class="glyphicon glyphicon-thumbs-up"></span>
-              </td>
                 <td>
-                   <a href="https://www.youtube.com/watch?v=${ video['videoid'] }">${ video['title'] }</a>
+                <iframe width="650" height="400"
+                  src="https://www.youtube.com/embed/${ video['videoid'] }">
+                </iframe>
                 </td>
             </tr>
     </table>`;
@@ -114,7 +112,7 @@ function display_video(video) {
 
 function display_failure_overlay() {
   // Unhide the error message overlay
-  var query = window.location.href.split("/results/")[1];
+  var query = window.location.href.split("/video_results/")[1];
   var overlay_message = `<p>There was an unexpected internal error.</p><br>
                          <a href="/video_results/${ query }" style="color:#FF7466;">Try Again</a>
                          <br><a href="/" style="color:#FF7466;">Home</a>`;
@@ -122,3 +120,14 @@ function display_failure_overlay() {
   $('#overlay').css('visibility', 'visible');
   $('#overlay-text').css('visibility', 'visible');
 }
+
+// Submit youtube search form on 'enter' while preventing it from showing on the form
+$('#youtube-form').keypress(
+ function(event){
+         if (event.which == '13') {
+             event.preventDefault()
+             document.getElementById("youtube-submit-btn").click();
+}});
+
+// Fill in search bar with current query as placeholder
+$('#search-box').attr("placeholder", decodeURI(window.location.href.split("/video_results/")[1]));

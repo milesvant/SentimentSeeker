@@ -33,7 +33,12 @@ class Tweet:
         """Calculates the sentiment score for this Tweet"""
         if self.text is not None:
             tb = TextBlob(self.text)
-            self.score = (tb.sentiment.polarity * tb.sentiment.subjectivity)
+            if tb.sentiment.polarity > 0:
+                self.score = (tb.sentiment.polarity +
+                              tb.sentiment.subjectivity)
+            else:
+                self.score = (tb.sentiment.polarity -
+                              tb.sentiment.subjectivity)
 
     def add_to_db(self):
         """Adds this Tweet to the app (SQL) database"""

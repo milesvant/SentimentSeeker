@@ -30,16 +30,24 @@ def index():
     if twtform.querytwt.data and twtform.validate_on_submit():
         q = twtform.querytwt.data
         return redirect(url_for('main.twitter_results', query=q))
-    return render_template('index.html', title='Home', ytform=ytform, twtform=twtform)
+    return render_template('index.html',
+                           title='Home',
+                           ytform=ytform,
+                           twtform=twtform)
+
+
+@bp.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html')
 
 
 @bp.route('/video_results/<query>', methods=['GET', 'POST'])
 def video_results(query):
     form = YoutubeSearchForm()
     if form.validate_on_submit():
-        q = form.query.data
+        q = form.queryyt.data
         return redirect(url_for('main.video_results', query=q))
-    return render_template('youtube/results.html', query=query)
+    return render_template('youtube/results.html', form=form, query=query)
 
 
 @bp.route('/download_video/<query>', methods=['POST'])
@@ -84,10 +92,11 @@ def download_video_status(task_id):
 def twitter_results(query):
     form = TwitterSearchForm()
     if form.validate_on_submit():
-        q = form.query.data
+        q = form.querytwt.data
         return redirect(url_for('main.twitter_results', query=q))
     positive_tweets, negative_tweets = sort_tweets(query)
     return render_template('twitter/results.html',
+                           form=form,
                            positive_tweets=positive_tweets,
                            negative_tweets=negative_tweets)
 

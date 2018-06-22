@@ -73,7 +73,12 @@ class Youtube_Video:
         """Calculates the sentiment score for this Youtube Video"""
         if self.caption is not None:
             tb = TextBlob(self.caption)
-            self.score = (tb.sentiment.polarity * tb.sentiment.subjectivity)
+            if tb.sentiment.polarity > 0:
+                self.score = (tb.sentiment.polarity +
+                              tb.sentiment.subjectivity)
+            else:
+                self.score = (tb.sentiment.polarity -
+                              tb.sentiment.subjectivity)
 
     def add_to_db(self):
         """Adds this Youtube Video to the app (SQL) database if its videoid and

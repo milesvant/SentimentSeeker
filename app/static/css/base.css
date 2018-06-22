@@ -10,8 +10,15 @@
   color: white;
 }
 
+#search-text {
+  color: white;
+  text-align: center;
+  font-size: 70px;
+  padding-top: 50px;
+}
+
 .jumbotron {
-  padding-top: 230px;
+  padding-top: 50px;
 }
 
 #youtube {

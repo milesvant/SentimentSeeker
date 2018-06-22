@@ -3,10 +3,14 @@
 
 
 {% block app_content %}
+    <div class="row">
+      <h1 id="search-text">Search...</h1>
+    </div>
+    <div class="row">
     <div class="col-md-6">
       <div class="jumbotron" id="youtube">
         <div class="container">
-          <h1>YouTopics</h1>
+          <h1>Youtube</h1>
           <p>View YouTube search results sorted by tone and language used.</p>
         </div>
         <div class="row">
@@ -26,7 +30,7 @@
     <div class="col-md-6">
       <div class="jumbotron" id="twitter">
         <div class="container">
-          <h1>Twopics</h1>
+          <h1>Twitter</h1>
           <p>View Twitter search results sorted by tone and language used.</p>
         </div>
         <div class="row">
@@ -43,6 +47,7 @@
         </div>
       </div>
     </div>
+  </div>
 {% endblock %}
 
 {% block scripts %}

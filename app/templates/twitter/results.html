@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap_mods/results_wtf.html" as wtf %}
 
 {% block styles %}
   {{ super() }}
@@ -10,12 +10,15 @@
 
 {% block app_content %}
     <div id="progress"></div>
-    {% if form %}
-      {{ wtf.quick_form(form) }}
-    {% endif %}
+    <form class="form form-horizontal" method="post" role="form" id="twitter-form">
+        {{ form.hidden_tag() }}
+        {{ wtf.form_errors(form, hiddens="only") }}
+        {{ wtf.form_field(form.querytwt) }}
+        <input type="submit" style="display:none" id="twitter-submit-btn" />
+    </form>
     <div class="row">
       <div class="col-md-6">
-        <span class="glyphicon glyphicon-thumbs-up"></span><p id="positive"><b>Positive Language</b></p>
+        <p id="positive"><b>Positive Language</b></p>
         <div id="positives">
           {% for tweet in positive_tweets %}
           <table class="table">
@@ -31,7 +34,7 @@
         </div>
       </div>
       <div class="col-md-6">
-        <span class="glyphicon glyphicon-thumbs-down"></span><p id="negative"><b>Negative Language</b></p>
+        <p id="negative"><b>Negative Language</b></p>
         <div id="negatives">
           {% for tweet in negative_tweets %}
           <table class="table">
