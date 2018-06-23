@@ -10,6 +10,9 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from config import Config
 from redis import Redis
+from rq_scheduler import Scheduler
+from datetime import datetime
+from flask_rq2 import RQ
 import rq
 from celery import Celery
 
@@ -21,6 +24,7 @@ login.login_message = 'Please log in to access this page.'
 mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
+rq = RQ()
 celery = Celery()
 
 
@@ -34,8 +38,12 @@ def create_app(config_class=Config):
     mail.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
-    app.redis = Redis.from_url(app.config['REDIS_URL'])
-    app.task_queue = rq.Queue('topic-tasks', connection=app.redis)
+    rq.init_app(app)
+
+    # Set up redis task queue
+    app.config['RQ_REDIS_URL'] = 'redis://localhost:6379/0'
+    app.config['RQ_QUEUES'] = ['default']
+    app.classifier = None
 
     app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
     app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'

@@ -8,3 +8,7 @@ client_secrets.json
 *config.yaml
 app.db
 redis-stable/
+.DS_Store
+tests/files/pos/
+tests/files/neg/
+training_data/

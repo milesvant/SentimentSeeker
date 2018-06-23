@@ -2,14 +2,13 @@ from flask import render_template, flash, redirect, url_for, request
 from flask import current_app, jsonify
 from flask_login import current_user, login_required
 from datetime import datetime
-from app import db
+from app import db, rq
 from app.main import bp
 from app.main.forms import EditProfileForm, PostForm, YoutubeSearchForm, TwitterSearchForm
 from app.main.youtube.sort_videos import sort_videos
 from app.main.twitter.sort_tweets import sort_tweets
 from app.models import User, Post
 import redis
-from rq import Queue, Connection, get_current_job, get_failed_queue
 
 
 @bp.before_request
@@ -38,7 +37,12 @@ def index():
 
 @bp.route('/about', methods=['GET'])
 def about():
-    return render_template('about.html')
+    return render_template('about/about.html')
+
+
+@bp.route('/licenses', methods=['GET'])
+def licenses():
+    return render_template('about/licenses.html')
 
 
 @bp.route('/video_results/<query>', methods=['GET', 'POST'])
@@ -52,7 +56,7 @@ def video_results(query):
 
 @bp.route('/download_video/<query>', methods=['POST'])
 def download_video(query):
-    task = current_app.task_queue.enqueue(sort_videos, args=[query])
+    task = rq.get_queue().enqueue(sort_videos, args=[query])
     task.meta['progress'] = 0
     return jsonify({}), 202, {'Location':
                               url_for('main.download_video_status',
@@ -63,7 +67,7 @@ def download_video(query):
 def download_video_status(task_id):
     """
     """
-    task = current_app.task_queue.fetch_job(task_id)
+    task = rq.get_queue().fetch_job(task_id)
     response = {}
     if task is None or task.is_failed:
         response = {'state': 'FAILED'}
