@@ -14,7 +14,6 @@ from rq_scheduler import Scheduler
 from datetime import datetime
 from flask_rq2 import RQ
 import rq
-from celery import Celery
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -25,7 +24,6 @@ mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
 rq = RQ()
-celery = Celery()
 
 
 def create_app(config_class=Config):
@@ -43,15 +41,16 @@ def create_app(config_class=Config):
     # Set up redis task queue
     app.config['RQ_REDIS_URL'] = 'redis://localhost:6379/0'
     app.config['RQ_QUEUES'] = ['default']
+    # set up rq task scheduler
+    app.config['RQ_SCHEDULER_CLASS']
+    app.scheduler = rq.get_scheduler(interval=60)
+    # Delete any existing jobs in the scheduler when the app starts up
+    for job in scheduler.get_jobs():
+        job.delete()
+    scheduler.schedule(datetime.utcnow(),
+                       'app.ml.sentiment_logisitic_regression.train_and_set_model',
+                       interval=60*60, repeat=None)
     app.classifier = None
-
-    app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-    app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-
-    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'],
-                    backend=app.config['CELERY_RESULT_BACKEND'])
-    celery.conf.update(app.config)
-    celery.config_from_object('celeryconfig')
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
