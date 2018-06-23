@@ -14,7 +14,6 @@ from rq_scheduler import Scheduler
 from datetime import datetime
 from flask_rq2 import RQ
 import rq
-from celery import Celery
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -44,14 +43,6 @@ def create_app(config_class=Config):
     app.config['RQ_REDIS_URL'] = 'redis://localhost:6379/0'
     app.config['RQ_QUEUES'] = ['default']
     app.classifier = None
-
-    app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-    app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-
-    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'],
-                    backend=app.config['CELERY_RESULT_BACKEND'])
-    celery.conf.update(app.config)
-    celery.config_from_object('celeryconfig')
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
