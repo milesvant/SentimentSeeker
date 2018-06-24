@@ -36,6 +36,7 @@ class YoutubeVideoDB(db.Model):
     title = db.Column(db.String(70), index=True, unique=False)
     caption = db.Column(db.String(10000), unique=False, default=None)
     score = db.Column(db.Integer, unique=False, default=None)
+    correct = db.Column(db.Boolean, default=None)
 
     def __repr__(self):
         return '<Youtube Video id:{} title:{} score:{}>'.format(
@@ -49,6 +50,7 @@ class TweetDB(db.Model):
     name = db.Column(db.String(12), index=True, unique=False)
     text = db.Column(db.String(280), unique=False)
     score = db.Column(db.Integer, unique=False, default=None)
+    correct = db.Column(db.Boolean, default=None)
 
     def __repr__(self):
         return '<Tweet tweeter:{} content:{} score:{}>'.format(

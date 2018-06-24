@@ -4,10 +4,11 @@ from flask_login import current_user, login_required
 from datetime import datetime
 from app import db, rq
 from app.main import bp
-from app.main.forms import EditProfileForm, PostForm, YoutubeSearchForm, TwitterSearchForm
+from app.main.forms import EditProfileForm, PostForm
+from app.main.forms import YoutubeSearchForm, TwitterSearchForm
 from app.main.youtube.sort_videos import sort_videos
 from app.main.twitter.sort_tweets import sort_tweets
-from app.models import User, Post
+from app.models import User, Post, YoutubeVideoDB, TweetDB
 import redis
 
 
@@ -103,6 +104,38 @@ def twitter_results(query):
                            form=form,
                            positive_tweets=positive_tweets,
                            negative_tweets=negative_tweets)
+
+
+@bp.route('/correct_video/<videoid>', methods=['POST'])
+def correct_video(videoid):
+    video = YoutubeVideoDB.query.filter_by(videoid=videoid).first()
+    if video is not None:
+        video.correct = True
+    return jsonify()
+
+
+@bp.route('/incorrect_video/<videoid>', methods=['POST'])
+def incorrect_video(videoid):
+    video = YoutubeVideoDB.query.filter_by(videoid=videoid).first()
+    if video is not None:
+        video.correct = False
+    return jsonify()
+
+
+@bp.route('/correct_tweet/<twitter_id>', methods=['POST'])
+def correct_tweet(twitter_id):
+    tweet = TweetDB.query.filter_by(twitter_id=twitter_id).first()
+    if tweet is not None:
+        tweet.correct = True
+    return jsonify()
+
+
+@bp.route('/incorrect_tweet/<twitter_id>', methods=['POST'])
+def incorrect_tweet(twitter_id):
+    tweet = TweetDB.query.filter_by(twitter_id=twitter_id).first()
+    if tweet is not None:
+        tweet.correct = False
+    return jsonify()
 
 
 @bp.route('/user/<username>')

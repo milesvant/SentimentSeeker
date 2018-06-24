@@ -2,7 +2,6 @@
  window.onload = (function() {
    $(".tweet").each(function() {
      var id = $(this).attr("tweetID");
-     console.log(id);
      twttr.widgets.createTweet(
        id, this,
        {
@@ -24,3 +23,45 @@
 
 // Fill in search bar with current query as placeholder
  $('#search-box').attr("placeholder", decodeURI(window.location.href.split("/twitter_results/")[1]));
+
+ function display_failure_overlay() {
+   // Unhide the error message overlay
+   var query = window.location.href.split("/twitter_results/")[1];
+   var overlay_message = `<p>There was an unexpected internal error.</p><br>
+                          <a href="/twitter_results/${ query }" style="color:#FF7466;">Try Again</a>
+                          <br><a href="/" style="color:#FF7466;">Home</a>`;
+   $('#overlay-text').append(overlay_message);
+   $('#overlay').css('visibility', 'visible');
+   $('#overlay-text').css('visibility', 'visible');
+ }
+
+ // Send appropriate AJAX request on button presses
+ $(".correct-button").click(function(e) {
+   e.preventDefault();
+   $.ajax({
+     context: this,
+     type: 'POST',
+     url: `/correct_tweet/${ $(this).attr("tweetID") }`,
+     data: {},
+     success: function(result) {
+     },
+     error: function (result) {
+       display_failure_overlay();
+     }
+   });
+ });
+
+ $(".incorrect-button").click(function(e) {
+   e.preventDefault();
+   $.ajax({
+     context: this,
+     type: 'POST',
+     url: `/incorrect_tweet/${ $(this).attr("tweetID") }`,
+     data: {},
+     success: function(result) {
+     },
+     error: function (result) {
+       display_failure_overlay();
+     }
+   });
+ });

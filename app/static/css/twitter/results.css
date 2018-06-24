@@ -15,3 +15,7 @@ span {
   text-align: center;
   font-size: 30px;
 }
+
+.btn-group {
+  padding-left: 100px !important;
+}

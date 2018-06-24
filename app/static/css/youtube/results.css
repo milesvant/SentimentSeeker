@@ -16,3 +16,6 @@ span {
   font-size: 30px;
 }
 
+.btn-group {
+  padding-left: 160px !important;
+}
