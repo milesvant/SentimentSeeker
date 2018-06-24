@@ -1,6 +1,7 @@
 import os
 import yaml
 import redis
+from datetime import timedelta
 from rq import Connection, Worker
 
 
@@ -18,7 +19,12 @@ class Config(object):
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    REDIS_URL = 'redis://localhost:6379/0'
     ADMINS = ['your-email@example.com']
     POSTS_PER_PAGE = 3
     LANGUAGES = ['en', 'es']
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+    REDIS_HOST = 'localhost'
+    REDIS_PASSWORD = ''
+    REDIS_PORT = 6379
+    REDIS_URL = 'redis://localhost:6379/0'

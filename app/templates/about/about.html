@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel = "stylesheet"
+        type = "text/css"
+        href = "{{ url_for("static", filename="css/about/about.css") }}" />
+{% endblock %}
+
+{% block app_content %}
+<div class="row">
+<div class="col-md-1"></div>
+<div class="col-md-10">
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">How It Works</h3>
+  </div>
+  <div class="panel-body">
+    <p></p>
+  </div>
+</div>
+</div>
+<div class="col-md-1"></div>
+</div>
+
+<div class="row">
+<div class="col-md-1"></div>
+<div class="col-md-10">
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Tech Stack</h3>
+  </div>
+  <div class="panel-body">
+    <p>A lot of different libraries and frameworks went into the making of this
+       website. At the base level, the backend is made with the Flask web framework.
+      I've used many helpful Flask extensions such as Flask-SQLAlchemy and Flask-Bootstrap to integrate
+      the other technologies I used into the backend. My ORM of choice is SQLAlchemy,
+      and the current database used is SQLite3. I use Redis Queue as my job queue,
+      and TextBlob to perform natural language processing tasks. On the frontend, I
+      use Bootstrap 3 as well as jQuery. The licenses for all technologies used can
+      be found in the 'Licenses' page found <a href="{{ url_for('main.licenses') }}">here</a>.</p>
+  </div>
+</div>
+</div>
+<div class="col-md-1"></div>
+</div>
+
+<div class="row">
+<div class="col-md-1"></div>
+<div class="col-md-10">
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">About Me</h3>
+  </div>
+  <div class="panel-body">
+    <p></p>
+  </div>
+</div>
+</div>
+<div class="col-md-1"></div>
+</div>
+{% endblock %}

@@ -5,11 +5,32 @@ from datetime import datetime
 from app import db, login
 from time import time
 import jwt
-import redis
-import rq
+
+
+class LogisticRegressionModel(db.Model):
+    """Database model for storing trained Logistic Regression models, along
+        with their respective accuracies."""
+    id = db.Column(db.Integer, primary_key=True)
+    model = db.Column(db.LargeBinary, unique=False)
+    accuracy = db.Column(db.Float, unique=False)
+    use_me = db.Column(db.Boolean)
+
+    def __cmp__(self, other):
+        """Comparisons betwen LogisticRegressionModel are done by comparing
+            their respective accuracies."""
+        return __cmp__(self.accuracy, other.accuracy)
+
+
+class InitialTrainingDataDB(db.Model):
+    """Database model for the initial (online movie review) data used to train
+       the sentiment classifier."""
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(10000), unique=False)
+    positive = db.Column(db.Boolean)
 
 
 class YoutubeVideoDB(db.Model):
+    """Database model for a Youtube Video"""
     id = db.Column(db.Integer, primary_key=True)
     videoid = db.Column(db.String(12), index=True, unique=True)
     title = db.Column(db.String(70), index=True, unique=False)
@@ -22,6 +43,7 @@ class YoutubeVideoDB(db.Model):
 
 
 class TweetDB(db.Model):
+    """Database model for a Tweet"""
     id = db.Column(db.Integer, primary_key=True)
     twitter_id = db.Column(db.Integer)
     name = db.Column(db.String(12), index=True, unique=False)

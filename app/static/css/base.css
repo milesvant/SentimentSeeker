@@ -1,5 +1,5 @@
 .navbar {
-  background: linear-gradient(90deg, #FF7466, #3399ff);
+  background: linear-gradient(90deg, #FF0000/*FF7466*/, #00aced/*3399ff*/);
 }
 
 #site_name {
@@ -39,7 +39,7 @@
 }
 
 body {
-  background: linear-gradient(90deg, #FF7466, #3399ff);
+  background: linear-gradient(90deg, #FF0000/*FF7466*/, #00aced/*3399ff*/);
 }
 
 #overlay {

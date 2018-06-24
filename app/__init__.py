@@ -1,6 +1,7 @@
 import logging
-from logging.handlers import SMTPHandler, RotatingFileHandler
+import rq
 import os
+from logging.handlers import SMTPHandler, RotatingFileHandler
 from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -13,7 +14,7 @@ from redis import Redis
 from rq_scheduler import Scheduler
 from datetime import datetime
 from flask_rq2 import RQ
-import rq
+from celery import Celery
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -24,6 +25,7 @@ mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
 rq = RQ()
+celery = Celery(__name__, broker=Config.CELERY_BROKER_URL)
 
 
 def create_app(config_class=Config):
@@ -42,15 +44,14 @@ def create_app(config_class=Config):
     app.config['RQ_REDIS_URL'] = 'redis://localhost:6379/0'
     app.config['RQ_QUEUES'] = ['default']
     # set up rq task scheduler
-    app.config['RQ_SCHEDULER_CLASS']
-    app.scheduler = rq.get_scheduler(interval=60)
+    app.config['RQ_SCHEDULER_QUEUE'] = 'default'
+    app.scheduler = rq.get_scheduler(interval=10)
     # Delete any existing jobs in the scheduler when the app starts up
-    for job in scheduler.get_jobs():
+    for job in app.scheduler.get_jobs():
         job.delete()
-    scheduler.schedule(datetime.utcnow(),
-                       'app.ml.sentiment_logisitic_regression.train_and_set_model',
-                       interval=60*60, repeat=None)
     app.classifier = None
+
+    celery.conf.update(app.config)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)

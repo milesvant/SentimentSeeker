@@ -1,10 +1,13 @@
 import os
 import re
+import pickle
 import youtube_dl
 from textblob import TextBlob
 from app import db
-from app.models import YoutubeVideoDB
+from app.models import YoutubeVideoDB, LogisticRegressionModel
 from flask import current_app
+from sklearn.linear_model import LogisticRegression
+from sklearn.feature_extraction.text import CountVectorizer
 
 
 class Youtube_Video:
@@ -72,13 +75,26 @@ class Youtube_Video:
     def calculate_sentiment(self):
         """Calculates the sentiment score for this Youtube Video"""
         if self.caption is not None:
-            tb = TextBlob(self.caption)
-            if tb.sentiment.polarity > 0:
-                self.score = (tb.sentiment.polarity +
-                              tb.sentiment.subjectivity)
+            classifier = None
+            for model in LogisticRegressionModel.query.all():
+                if model.use_me is True:
+                    classifier = model
+                    break
+            if classifier is not None:
+                classifier = pickle.load(classifier.model)
+                vectorizer = CountVectorizer(analyzer='word', lowercase=False,)
+                features = vectorizer.fit_transform([self.caption])
+                features_nd = features.toarray()
+                self.score = classifier.predict(features_nd)[0]
+            # If no classifier trained (or error), use TextBlob
             else:
-                self.score = (tb.sentiment.polarity -
-                              tb.sentiment.subjectivity)
+                tb = TextBlob(self.caption)
+                if tb.sentiment.polarity > 0:
+                    self.score = (tb.sentiment.polarity +
+                                  tb.sentiment.subjectivity)
+                else:
+                    self.score = (tb.sentiment.polarity -
+                                  tb.sentiment.subjectivity)
 
     def add_to_db(self):
         """Adds this Youtube Video to the app (SQL) database if its videoid and
