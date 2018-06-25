@@ -7,11 +7,17 @@ from googleapiclient.discovery import build
 def youtube_search(query, max_results=10):
     CONFIG_FILE = "{}/youtube_config.yaml".format(
         os.path.abspath(os.path.dirname(__file__)))
-    with open(CONFIG_FILE) as y:
-        config_data = yaml.load(y)
-        youtube = build(config_data['YOUTUBE_API_SERVICE_NAME'],
-                        config_data['YOUTUBE_API_VERSION'],
-                        developerKey=config_data['DEVELOPER_KEY'])
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE) as y:
+            config_data = yaml.load(y)
+            asn = config_data['YOUTUBE_API_SERVICE_NAME']
+            av = config_data['YOUTUBE_API_VERSION']
+            devkey = config_data['DEVELOPER_KEY']
+    else:
+        asn = os.environ.get('YOUTUBE_API_SERVICE_NAME')
+        av = os.environ.get('YOUTUBE_API_VERSION')
+        devkey = os.environ.get('YOUTUBE_DEVELOPER_KEY')
+    youtube = build(asn, av, developerKey=devkey)
 
     # Call the search().list method to retrieve results matching the specified
     # query term.

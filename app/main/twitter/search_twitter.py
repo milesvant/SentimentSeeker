@@ -17,16 +17,22 @@ def search_twitter(query, max_results=20):
     # load config data from twitter_config.yaml
     CONFIG_FILE = "{}/twitter_config.yaml".format(
         os.path.abspath(os.path.dirname(__file__)))
-    with open(CONFIG_FILE) as y:
-        config = yaml.load(y)
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE) as y:
+            config = yaml.load(y)
         consumer_key = config['CONSUMER_KEY']
         consumer_secret = config['CONSUMER_SECRET']
         access_token_key = config['ACCESS_TOKEN']
         access_token_secret = config['ACCESS_TOKEN_SECRET']
-        twitter_api = twitter.Api(consumer_key,
-                                  consumer_secret,
-                                  access_token_key,
-                                  access_token_secret)
+    else:
+        consumer_key = os.environ.get('TWITTER_CONSUMER_KEY')
+        consumer_secret = os.environ.get('TWITTER_CONSUMER_SECRET')
+        access_token_key = os.environ.get('TWITTER_ACCESS_TOKEN')
+        access_token_secret = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET')
+    twitter_api = twitter.Api(consumer_key,
+                              consumer_secret,
+                              access_token_key,
+                              access_token_secret)
     # search twitter api for query (sorted by popular)
     results = twitter_api.GetSearch(
         raw_query="q={}&lang=en&result_type=popular&count={}".format(
