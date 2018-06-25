@@ -13,6 +13,7 @@ class LogisticRegressionModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     model = db.Column(db.LargeBinary, unique=False)
     accuracy = db.Column(db.Float, unique=False)
+    vectorizer = db.Column(db.LargeBinary, unique=False)
     use_me = db.Column(db.Boolean)
 
     def __cmp__(self, other):

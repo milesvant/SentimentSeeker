@@ -76,10 +76,8 @@ class Youtube_Video:
         """Calculates the sentiment score for this Youtube Video"""
         if self.caption is not None:
             classifier = None
-            for model in LogisticRegressionModel.query.all():
-                if model.use_me is True:
-                    classifier = model
-                    break
+            if len(LogisticRegressionModel.query.all()) != 0:
+                classifier = LogisticRegressionModel.query.all()[0]
             if classifier is not None:
                 classifier = pickle.load(classifier.model)
                 vectorizer = CountVectorizer(analyzer='word', lowercase=False,)

@@ -1,4 +1,5 @@
 import pickle
+import glob
 import numpy as np
 from app import db
 from app.models import TweetDB, YoutubeVideoDB
@@ -9,7 +10,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
 
-def train_logistic_regression(use_db=False):
+def train_logistic_regression(use_db=True):
     """Trains a logistic regression model using the inital training data
         (online movie reviews) as well as videos and tweets in the database
         (if wanted).
@@ -24,15 +25,41 @@ def train_logistic_regression(use_db=False):
     data = []
     data_labels = []
     # Add initial training data to the list of data and labels
-    for entry in InitialTrainingDataDB.query.all():
-        data.append(entry.text)
-        if entry.positive:
+    for file in glob.glob('./training_data/pos/*.txt'):
+        with open(file) as f:
+            text = f.read()
+            data.append(text)
             data_labels.append(1)
-        else:
+    for file in glob.glob('./training_data/neg/*.txt'):
+        with open(file) as f:
+            text = f.read()
+            data.append(text)
             data_labels.append(-1)
     # If using voted-on videos and tweets, add those as well
     if use_db:
-        pass
+        voted_on_videos = YoutubeVideoDB.query.filter(
+            YoutubeVideoDB.correct.isnot(None))
+        for video in voted_on_videos:
+            data.append(video.caption)
+            if video.correct is True and video.score <= 0:
+                data_labels.append(-1)
+            elif video.correct is True and video.score > 0:
+                data_labels.append(1)
+            elif video.correct is False and video.score <= 0:
+                data_labels.append(1)
+            elif video.correct is False and video.score > 0:
+                data_labels.append(-1)
+        voted_on_tweets = TweetDB.query.filter(TweetDB.correct.isnot(None))
+        for tweet in voted_on_tweets:
+            data.append(tweet.text)
+            if tweet.correct is True and tweet.score <= 0:
+                data_labels.append(-1)
+            elif tweet.correct is True and tweet.score > 0:
+                data_labels.append(1)
+            elif tweet.correct is False and tweet.score <= 0:
+                data_labels.append(1)
+            elif tweet.correct is False and tweet.score > 0:
+                data_labels.append(-1)
     vectorizer = CountVectorizer(analyzer='word', lowercase=False,)
     features = vectorizer.fit_transform(data)
     features_nd = features.toarray()
@@ -46,10 +73,10 @@ def train_logistic_regression(use_db=False):
     log_model = log_model.fit(X=X_train, y=y_train)
     y_pred = log_model.predict(X_test)
     # Score accuracy then return model and accuracy
-    return log_model, accuracy_score(y_test, y_pred)
+    return log_model, accuracy_score(y_test, y_pred), vectorizer
 
 
-def store_logistic_regression(model, accuracy):
+def store_logistic_regression(model, accuracy, vectorizer):
     """Stores a trained logistic regression model in the database.
 
        Args:
@@ -57,6 +84,18 @@ def store_logistic_regression(model, accuracy):
             accuracy: float between 0 and 1 representing the model's accuracy
     """
     pickled_model = pickle.dumps(model)
-    lrmodel = LogisticRegressionModel(model=pickled_model, accuracy=accuracy)
+    pickled_vec = pickle.dumps(vectorizer)
+    lrmodel = LogisticRegressionModel(
+        model=pickled_model, accuracy=accuracy, vectorizer=pickled_vec)
     db.session.add(lrmodel)
     db.session.commit()
+
+
+def reset_use_me():
+    """Delete all but the best LogisticRegressionModel in the db"""
+    if len(LogisticRegressionModel.query.all()) != 0:
+        best_model = max(LogisticRegressionModel.query.all())
+        for model in LogisticRegressionModel.query.all():
+            if model != best_model:
+                db.session.delete(model)
+                db.session.commit()

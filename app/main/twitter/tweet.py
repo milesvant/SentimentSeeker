@@ -36,10 +36,8 @@ class Tweet:
         """Calculates the sentiment score for this Tweet"""
         if self.text is not None:
             classifier = None
-            for model in LogisticRegressionModel.query.all():
-                if mode.use_me is True:
-                    classifier = model
-                    break
+            if len(LogisticRegressionModel.query.all()) != 0:
+                classifier = LogisticRegressionModel.query.all()[0]
             if classifier is not None:
                 classifier = pickle.load(classifier.model)
                 vectorizer = CountVectorizer(analyzer='word', lowercase=False,)
