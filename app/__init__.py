@@ -41,15 +41,9 @@ def create_app(config_class=Config):
     rq.init_app(app)
 
     # Set up redis task queue
-    app.config['RQ_REDIS_URL'] = 'redis://localhost:6379/0'
+    app.config['RQ_REDIS_URL'] = os.environ.get('REDIS_URL')
     app.config['RQ_QUEUES'] = ['default']
     # set up rq task scheduler
-    app.config['RQ_SCHEDULER_QUEUE'] = 'default'
-    app.scheduler = rq.get_scheduler(interval=10)
-    # Delete any existing jobs in the scheduler when the app starts up
-    for job in app.scheduler.get_jobs():
-        job.delete()
-    app.classifier = None
 
     celery.conf.update(app.config)
 
