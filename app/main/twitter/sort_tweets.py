@@ -35,6 +35,7 @@ def sort_tweets(query, max_request=20):
         # add to database or replace existing entry if changes have
         # been made
         if db_entry is None:
+            pass
             # twt.add_to_db()
         elif needs_update:
             db.session.delete(db_entry)
