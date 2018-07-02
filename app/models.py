@@ -25,7 +25,7 @@ class LogisticRegressionModel(db.Model):
 class InitialTrainingDataDB(db.Model):
     """Database model for the initial (online movie review) data used to train
        the sentiment classifier."""
-    id = db.Column(db.String(30), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(10000), unique=False)
     positive = db.Column(db.Boolean)
 
@@ -46,8 +46,8 @@ class YoutubeVideoDB(db.Model):
 
 class TweetDB(db.Model):
     """Database model for a Tweet"""
-    id = db.Column(db.String(30), primary_key=True)
-    twitter_id = db.Column(db.String(25), unique=True, index=True)
+    id = db.Column(db.Integer, primary_key=True)
+    twitter_id = db.Column(db.String(30), unique=True, index=True)
     name = db.Column(db.String(12), index=True, unique=False)
     text = db.Column(db.String(280), unique=False)
     score = db.Column(db.Integer, unique=False, default=None)
