@@ -69,7 +69,7 @@ class Tweet:
             Returns:
                 First database entry whose id matches this Tweet.
         """
-        db_entry = TweetDB.query.filter_by(twitter_id=self.id).first()
+        db_entry = TweetDB.query.filter_by(twitter_id=str(self.id)).first()
         if db_entry is not None:
             return db_entry
 
