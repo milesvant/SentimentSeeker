@@ -6,7 +6,7 @@ todo.txt
 *-oauth2.json
 client_secrets.json
 *config.yaml
-app.db
+*.db
 redis-stable/
 .DS_Store
 tests/files/pos/
