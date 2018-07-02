@@ -38,7 +38,7 @@ def sort_tweets(query, max_request=20):
             twt.add_to_db()
         elif needs_update:
             db.session.delete(db_entry)
-            twt.add_to_db()
+            # twt.add_to_db()
             db.session.commit()
     positive_tweets = list(filter(lambda x: x.score > 0, tweets))
     negative_tweets = list(filter(lambda x: x.score <= 0, tweets))
