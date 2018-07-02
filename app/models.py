@@ -25,7 +25,7 @@ class LogisticRegressionModel(db.Model):
 class InitialTrainingDataDB(db.Model):
     """Database model for the initial (online movie review) data used to train
        the sentiment classifier."""
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(30), primary_key=True)
     text = db.Column(db.String(10000), unique=False)
     positive = db.Column(db.Boolean)
 
