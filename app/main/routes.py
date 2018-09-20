@@ -124,7 +124,7 @@ def incorrect_video(videoid):
 
 @bp.route('/correct_tweet/<twitter_id>', methods=['POST'])
 def correct_tweet(twitter_id):
-    tweet = TweetDB.query.filter_by(twitter_id=twitter_id).first()
+    tweet = TweetDB.query.filter_by(twitter_id=str(twitter_id)).first()
     if tweet is not None:
         tweet.correct = True
     return jsonify()
@@ -132,7 +132,7 @@ def correct_tweet(twitter_id):
 
 @bp.route('/incorrect_tweet/<twitter_id>', methods=['POST'])
 def incorrect_tweet(twitter_id):
-    tweet = TweetDB.query.filter_by(twitter_id=twitter_id).first()
+    tweet = TweetDB.query.filter_by(twitter_id=str(twitter_id)).first()
     if tweet is not None:
         tweet.correct = False
     return jsonify()
