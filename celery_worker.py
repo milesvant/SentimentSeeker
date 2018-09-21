@@ -29,7 +29,6 @@ celery = create_celery(flask_app)
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    # Calls reverse_messages every 10 seconds.
     sender.add_periodic_task(60.0,
                              run_update_sentiment,
                              name='run_update_sentiment every 60')
