@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask import current_app, jsonify
 from flask_login import current_user, login_required
 from datetime import datetime
-from app import db, rq
+from app import db
 from app.main import bp
 from app.main.forms import EditProfileForm, PostForm
 from app.main.forms import YoutubeSearchForm, TwitterSearchForm
@@ -57,7 +57,7 @@ def video_results(query):
 
 @bp.route('/download_video/<query>', methods=['POST'])
 def download_video(query):
-    task = rq.get_queue().enqueue(sort_videos, args=[query])
+    task = current_app.task_queue.enqueue(sort_videos, args=[query])
     task.meta['progress'] = 0
     return jsonify({}), 202, {'Location':
                               url_for('main.download_video_status',
@@ -68,7 +68,7 @@ def download_video(query):
 def download_video_status(task_id):
     """
     """
-    task = rq.get_queue().fetch_job(task_id)
+    task = current_app.task_queue.fetch_job(task_id)
     response = {}
     if task is None or task.is_failed:
         response = {'state': 'FAILED'}
