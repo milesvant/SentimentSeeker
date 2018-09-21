@@ -9,7 +9,7 @@ from app.main.forms import YoutubeSearchForm, TwitterSearchForm
 from app.main.youtube.sort_videos import sort_videos
 from app.main.twitter.sort_tweets import sort_tweets
 from app.models import User, Post, YoutubeVideoDB, TweetDB
-from app.ml.ml_task import run_update_sentiment
+from app.main.ml.ml_task import run_update_sentiment
 import redis
 
 

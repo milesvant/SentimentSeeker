@@ -26,6 +26,4 @@ class Config(object):
     ADMINS = ['your-email@example.com']
     POSTS_PER_PAGE = 3
     LANGUAGES = ['en', 'es']
-    CELERY_BROKER_URL = 'redis://localhost:6379/0'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
     REDIS_URL = os.getenv('REDIS_URL')

@@ -14,7 +14,6 @@ from redis import Redis
 from rq_scheduler import Scheduler
 from datetime import datetime
 from flask_rq2 import RQ
-from celery import Celery
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -24,7 +23,6 @@ login.login_message = 'Please log in to access this page.'
 mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
-celery = Celery(__name__, broker=Config.CELERY_BROKER_URL)
 
 
 def create_app(config_class=Config):
@@ -42,8 +40,6 @@ def create_app(config_class=Config):
     app.config['RQ_QUEUES'] = ['default']
     app.redis = Redis.from_url(app.config['RQ_REDIS_URL'])
     app.task_queue = rq.Queue('default', connection=app.redis)
-
-    celery.conf.update(app.config)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
