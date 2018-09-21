@@ -1,1 +1,1 @@
-web: flask db upgrade; gunicorn topic:app; python worker.py
+web: flask db upgrade; gunicorn topic:app; python -u worker.py
