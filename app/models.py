@@ -34,7 +34,7 @@ class YoutubeVideoDB(db.Model):
     """Database model for a Youtube Video"""
     id = db.Column(db.Integer, primary_key=True)
     videoid = db.Column(db.String(12), index=True, unique=True)
-    title = db.Column(db.String(70), index=True, unique=False)
+    title = db.Column(db.String(100), index=True, unique=False)
     caption = db.Column(db.String(10000), unique=False, default=None)
     score = db.Column(db.Integer, unique=False, default=None)
     correct = db.Column(db.Boolean, default=None)

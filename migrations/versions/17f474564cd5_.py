@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 256bc19851e3
+Revision ID: 17f474564cd5
 Revises: 
-Create Date: 2018-09-21 16:04:32.577700
+Create Date: 2018-09-21 18:28:33.726375
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '256bc19851e3'
+revision = '17f474564cd5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -57,7 +57,7 @@ def upgrade():
     op.create_table('youtube_videoDB',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('videoid', sa.String(length=12), nullable=True),
-    sa.Column('title', sa.String(length=70), nullable=True),
+    sa.Column('title', sa.String(length=100), nullable=True),
     sa.Column('caption', sa.String(length=10000), nullable=True),
     sa.Column('score', sa.Integer(), nullable=True),
     sa.Column('correct', sa.Boolean(), nullable=True),

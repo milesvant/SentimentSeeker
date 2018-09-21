@@ -41,7 +41,6 @@ def create_app(config_class=Config):
     app.config['RQ_REDIS_URL'] = os.getenv('REDIS_URL')
     app.config['RQ_QUEUES'] = ['default']
     app.redis = Redis.from_url(app.config['RQ_REDIS_URL'])
-    # set up rq task scheduler
     app.task_queue = rq.Queue('default', connection=app.redis)
 
     celery.conf.update(app.config)
