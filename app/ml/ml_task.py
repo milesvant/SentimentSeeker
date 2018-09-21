@@ -3,6 +3,7 @@ from app.ml.sentiment_logistic_regression import store_logistic_regression
 from app.ml.sentiment_logistic_regression import reset_use_me
 from datetime import timedelta
 from rq import get_current_job
+from topic import create_app
 
 
 def run_update_sentiment(use_db=True):
