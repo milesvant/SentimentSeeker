@@ -1,5 +1,5 @@
 import os
-import urlparse
+from urllib.parse import urlparse
 from redis import Redis
 from rq import Queue, Connection
 from rq.worker import HerokuWorker as Worker
@@ -11,7 +11,7 @@ if not redis_url:
     raise RuntimeError('Set up Redis To Go first.')
 
 urlparse.uses_netloc.append('redis')
-url = urlparse.urlparse(redis_url)
+url = urlparse(redis_url)
 conn = Redis(host=url.hostname, port=url.port, db=0, password=url.password)
 
 if __name__ == '__main__':
