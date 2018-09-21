@@ -24,7 +24,6 @@ login.login_message = 'Please log in to access this page.'
 mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
-rq = RQ()
 celery = Celery(__name__, broker=Config.CELERY_BROKER_URL)
 
 
@@ -38,8 +37,6 @@ def create_app(config_class=Config):
     mail.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
-    rq.init_app(app)
-
     # Set up redis task queue
     app.config['RQ_REDIS_URL'] = os.getenv('REDIS_URL')
     app.config['RQ_QUEUES'] = ['default']
