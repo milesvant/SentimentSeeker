@@ -1,8 +1,8 @@
-"""Adding all
+"""empty message
 
-Revision ID: 3ec30aba0cca
+Revision ID: 6d9fb58f62eb
 Revises: 
-Create Date: 2018-07-01 22:53:43.657534
+Create Date: 2018-09-21 02:46:43.422085
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3ec30aba0cca'
+revision = '6d9fb58f62eb'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -34,15 +34,15 @@ def upgrade():
     )
     op.create_table('tweetDB',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('twitter_id', sa.String(length=30), nullable=True),
+    sa.Column('twitter_id', sa.BigInteger(), nullable=True),
     sa.Column('name', sa.String(length=12), nullable=True),
     sa.Column('text', sa.String(length=280), nullable=True),
     sa.Column('score', sa.Integer(), nullable=True),
     sa.Column('correct', sa.Boolean(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('twitter_id')
     )
     op.create_index(op.f('ix_tweetDB_name'), 'tweetDB', ['name'], unique=False)
-    op.create_index(op.f('ix_tweetDB_twitter_id'), 'tweetDB', ['twitter_id'], unique=True)
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=64), nullable=True),
@@ -94,7 +94,6 @@ def downgrade():
     op.drop_index(op.f('ix_user_username'), table_name='user')
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')
-    op.drop_index(op.f('ix_tweetDB_twitter_id'), table_name='tweetDB')
     op.drop_index(op.f('ix_tweetDB_name'), table_name='tweetDB')
     op.drop_table('tweetDB')
     op.drop_table('logistic_regression_model')

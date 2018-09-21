@@ -22,7 +22,7 @@ class Tweet:
     def __init__(self, name, text, id, score=None):
         self.name = name
         self.text = text
-        self.id = str(id)
+        self.id = int(id)
         self.score = score
 
     def __repr__(self):

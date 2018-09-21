@@ -47,7 +47,7 @@ class YoutubeVideoDB(db.Model):
 class TweetDB(db.Model):
     """Database model for a Tweet"""
     id = db.Column(db.Integer, primary_key=True)
-    twitter_id = db.Column(db.String(30), unique=True)
+    twitter_id = db.Column(db.BigInteger, unique=True)
     name = db.Column(db.String(12), index=True, unique=False)
     text = db.Column(db.String(280), unique=False)
     score = db.Column(db.Integer, unique=False, default=None)
