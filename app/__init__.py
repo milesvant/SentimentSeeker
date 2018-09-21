@@ -41,7 +41,7 @@ def create_app(config_class=Config):
     rq.init_app(app)
 
     # Set up redis task queue
-    app.config['RQ_REDIS_URL'] = os.environ.get('REDIS_URL')
+    app.config['RQ_REDIS_URL'] = os.getenv('REDISTOGO_URL')
     app.config['RQ_QUEUES'] = ['default']
     # set up rq task scheduler
 
