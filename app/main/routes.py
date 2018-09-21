@@ -113,8 +113,8 @@ def correct_video(videoid):
     if video is not None:
         video.correct = True
         db.session.commit()
-        if (len(YoutubeVideoDB.query.filter_by(correct=True)) +
-                len(YoutubeVideoDB.query.filter_by(correct=False))) % 10 == 0:
+        if (len(YoutubeVideoDB.query.filter_by(correct=True).all()) +
+                len(YoutubeVideoDB.query.filter_by(correct=False).all())) % 10 == 0:
             current_app.task_queue.enqueue(run_update_sentiment)
     return jsonify()
 
@@ -125,8 +125,8 @@ def incorrect_video(videoid):
     if video is not None:
         video.correct = False
         db.session.commit()
-        if (len(YoutubeVideoDB.query.filter_by(correct=True)) +
-                len(YoutubeVideoDB.query.filter_by(correct=False))) % 10 == 0:
+        if (len(YoutubeVideoDB.query.filter_by(correct=True).all()) +
+                len(YoutubeVideoDB.query.filter_by(correct=False).all())) % 10 == 0:
             current_app.task_queue.enqueue(run_update_sentiment)
     return jsonify()
 
@@ -137,8 +137,8 @@ def correct_tweet(twitter_id):
     if tweet is not None:
         tweet.correct = True
         db.session.commit()
-        if (len(TweetDB.query.filter_by(correct=True)) +
-                len(TweetDB.query.filter_by(correct=False))) % 10 == 0:
+        if (len(TweetDB.query.filter_by(correct=True).all()) +
+                len(TweetDB.query.filter_by(correct=False).all())) % 10 == 0:
             current_app.task_queue.enqueue(run_update_sentiment)
     return jsonify()
 
@@ -149,8 +149,8 @@ def incorrect_tweet(twitter_id):
     if tweet is not None:
         tweet.correct = False
         db.session.commit()
-        if (len(TweetDB.query.filter_by(correct=True)) +
-                len(TweetDB.query.filter_by(correct=False))) % 10 == 0:
+        if (len(TweetDB.query.filter_by(correct=True).all()) +
+                len(TweetDB.query.filter_by(correct=False).all())) % 10 == 0:
             current_app.task_queue.enqueue(run_update_sentiment)
     return jsonify()
 
