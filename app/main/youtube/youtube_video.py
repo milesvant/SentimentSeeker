@@ -69,6 +69,8 @@ class Youtube_Video:
                 caption = file.read()
             os.system("rm -- %s/%s.en.ttml" % (DOWNLOADS, self.videoid))
             self.caption = self.ttml_to_plaintext(caption)
+            if len(self.caption) > 10000:
+                self.caption = self.caption[0:9999]
         except IOError:
             self.caption = ""
 
