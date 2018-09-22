@@ -81,7 +81,7 @@ class Youtube_Video:
             if len(LogisticRegressionModel.query.all()) != 0:
                 classifier = LogisticRegressionModel.query.all()[0]
             if classifier is not None:
-                classifier = pickle.load(classifier.model)
+                classifier = pickle.loads(classifier.model)
                 vectorizer = CountVectorizer(analyzer='word', lowercase=False,)
                 features = vectorizer.fit_transform([self.caption])
                 features_nd = features.toarray()
