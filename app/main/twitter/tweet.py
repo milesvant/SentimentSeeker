@@ -42,6 +42,7 @@ class Tweet:
                 classifier = pickle.loads(classifier.model)
                 vectorizer = CountVectorizer(analyzer='word', lowercase=False,)
                 features = vectorizer.fit_transform([self.text])
+                print(features)
                 features_nd = features.toarray()
                 self.score = classifier.predict(features_nd)[0]
             # if no classifier trained (or error) then use TextBlob
