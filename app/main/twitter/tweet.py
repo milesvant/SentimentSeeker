@@ -3,10 +3,8 @@ import re
 import pickle
 from textblob import TextBlob
 from app import db
-from app.models import TweetDB, LogisticRegressionModel
+from app.models import TweetDB
 from flask import current_app
-from sklearn.linear_model import LogisticRegression
-from sklearn.feature_extraction.text import CountVectorizer
 
 
 class Tweet:
@@ -34,26 +32,13 @@ class Tweet:
 
     def calculate_sentiment(self):
         """Calculates the sentiment score for this Tweet"""
-        if self.text is not None:
-            classifier = None
-            if len(LogisticRegressionModel.query.all()) != 0:
-                classifier = LogisticRegressionModel.query.all()[0]
-            if classifier is not None:
-                classifier = pickle.loads(classifier.model)
-                vectorizer = CountVectorizer(analyzer='word', lowercase=False,)
-                features = vectorizer.fit_transform([self.text])
-                print(features)
-                features_nd = features.toarray()
-                self.score = classifier.predict(features_nd)[0]
-            # if no classifier trained (or error) then use TextBlob
-            else:
-                tb = TextBlob(self.text)
-                if tb.sentiment.polarity > 0:
-                    self.score = (tb.sentiment.polarity +
-                                  tb.sentiment.subjectivity)
-                else:
-                    self.score = (tb.sentiment.polarity -
-                                  tb.sentiment.subjectivity)
+        tb = TextBlob(self.text)
+        if tb.sentiment.polarity > 0:
+            self.score = (tb.sentiment.polarity +
+                          tb.sentiment.subjectivity)
+        else:
+            self.score = (tb.sentiment.polarity -
+                          tb.sentiment.subjectivity)
 
     def add_to_db(self):
         """Adds this Tweet to the app (SQL) database"""
