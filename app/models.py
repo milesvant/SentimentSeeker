@@ -1,5 +1,5 @@
 from datetime import datetime
-from app import db, login
+from app import db
 from time import time
 
 
