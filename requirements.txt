@@ -15,11 +15,8 @@ fakeredis==0.10.3
 Flask==1.0.2
 Flask-Bootstrap==3.3.7.1
 Flask-Login==0.4.1
-Flask-Mail==0.9.1
 Flask-Migrate==2.1.1
-Flask-Moment==0.6.0
 Flask-OAuthlib==0.9.5
-Flask-PyMongo==0.5.2
 Flask-RQ2==18.0
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
