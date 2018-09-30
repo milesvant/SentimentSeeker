@@ -34,34 +34,3 @@
    $('#overlay').css('visibility', 'visible');
    $('#overlay-text').css('visibility', 'visible');
  }
-
- // Send appropriate AJAX request on button presses
- $(".correct-button").click(function(e) {
-   e.preventDefault();
-   $.ajax({
-     context: this,
-     type: 'POST',
-     url: `/correct_tweet/${ $(this).attr("tweetID") }`,
-     data: {},
-     success: function(result) {
-     },
-     error: function (result) {
-       display_failure_overlay();
-     }
-   });
- });
-
- $(".incorrect-button").click(function(e) {
-   e.preventDefault();
-   $.ajax({
-     context: this,
-     type: 'POST',
-     url: `/incorrect_tweet/${ $(this).attr("tweetID") }`,
-     data: {},
-     success: function(result) {
-     },
-     error: function (result) {
-       display_failure_overlay();
-     }
-   });
- });

@@ -100,10 +100,6 @@ function display_video(video) {
     var positive_entry = `<table class="table">
             <tr>
                 <td>
-                <div class="btn-group">
-                  <a href="#" class="btn btn-success" videoid="${ video['videoid'] }">Correctly Classified</a>
-                  <a href="#" class="btn btn-danger" videoid="${ video['videoid'] }">Incorrectly Classfied</a>
-                </div>
                 <iframe width="650" height="400"
                   src="https://www.youtube.com/embed/${ video['videoid'] }">
                 </iframe>
@@ -138,31 +134,3 @@ $('#youtube-form').keypress(
 // Fill in search bar with current query as placeholder
 $('#search-box').attr("placeholder", decodeURI(window.location.href.split("/video_results/")[1]));
 
-// Send appropriate AJAX request on button presses
-$(document).on('click', $(".btn"), function() {
-  if($(this).attr("activeElement").getAttribute("class") == "btn btn-danger") {
-    $.ajax({
-      context: this,
-      type: 'POST',
-      url: `/incorrect_video/${ $(this).attr("activeElement").getAttribute("videoid") }`,
-      data: {},
-      success: function(result) {
-      },
-      error: function (result) {
-        display_failure_overlay();
-      }
-    });
-  } else {
-    $.ajax({
-      context: this,
-      type: 'POST',
-      url: `/correct_video/${ $(this).attr("activeElement").getAttribute("videoid") }`,
-      data: {},
-      success: function(result) {
-      },
-      error: function (result) {
-        display_failure_overlay();
-      }
-    });
-  }
-});
